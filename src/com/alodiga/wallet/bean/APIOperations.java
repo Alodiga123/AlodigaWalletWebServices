@@ -127,8 +127,10 @@ import com.alodiga.ws.remittance.services.WsRemittenceResponse;
 import com.ericsson.alodiga.ws.Cuenta;
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.ConnectException;
 import java.time.Instant;
 
 import javax.net.ssl.HostnameVerifier;
@@ -458,26 +460,31 @@ public class APIOperations {
             for (Product p : products) {
                 Float amount = 0F;
                 try {
-                    if (p.getId().equals(Product.PREPAID_CARD)) {
-                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
-                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
-                        CardResponse cardResponse = getCardByUserId(userId);
-                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                        if (statusCardResponse.getCodigo().equals("00")) {
-                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                            amount = Float.valueOf(accountResponse.getComprasDisponibles());
-                        } else {
-                            amount = Float.valueOf(0);
-                        }
-
-                    } else {
+//                    if (p.getId().equals(Product.PREPAID_CARD)) {
+//                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
+//                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
+//                        CardResponse cardResponse = getCardByUserId(userId);
+//                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                        if (statusCardResponse.getCodigo().equals("00")) {
+//                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                            amount = Float.valueOf(accountResponse.getComprasDisponibles());
+//                        } else {
+//                            amount = Float.valueOf(0);
+//                        }
+//
+//                    } else {
 
                         amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                    }
+                    //}
                 } catch (NoResultException e) {
+                    e.printStackTrace();
                     amount = 0F;
                 }
+//                    catch (ConnectException e) {
+//                    e.printStackTrace();
+//                    amount = 0F;
+//                }
                 p.setCurrentBalance(amount);
             }
 
@@ -684,26 +691,31 @@ public class APIOperations {
             for (Product p : products) {
                 Float amount = 0F;
                 try {
-                    if (p.getId().equals(Product.PREPAID_CARD)) {
-                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
-                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
-                        CardResponse cardResponse = getCardByUserId(userId);
-                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                        if (statusCardResponse.getCodigo().equals("00")) {
-                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                            amount = Float.valueOf(accountResponse.getComprasDisponibles());
-                        } else {
-                            amount = Float.valueOf(0);
-                        }
-
-                    } else {
+//                    if (p.getId().equals(Product.PREPAID_CARD)) {
+//                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
+//                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
+//                        CardResponse cardResponse = getCardByUserId(userId);
+//                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                        if (statusCardResponse.getCodigo().equals("00")) {
+//                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                            amount = Float.valueOf(accountResponse.getComprasDisponibles());
+//                        } else {
+//                            amount = Float.valueOf(0);
+//                        }
+//
+//                    } else {
 
                         amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                    }
+                    //}
                 } catch (NoResultException e) {
+                    e.printStackTrace();
                     amount = 0F;
                 }
+//                    catch (ConnectException e) {
+//                    e.printStackTrace();
+//                    amount = 0F;
+//                }
                 p.setCurrentBalance(amount);
             }
 
@@ -723,6 +735,7 @@ public class APIOperations {
             e.printStackTrace();
             return new TransactionResponse(ResponseCode.ERROR_INTERNO, "Error in process saving transaction");
         }
+        
         TransactionResponse transactionResponse = new TransactionResponse(ResponseCode.EXITO, "EXITO", products);
         transactionResponse.setIdTransaction(transfer.getId().toString());
         transactionResponse.setProducts(products);
@@ -975,22 +988,22 @@ public class APIOperations {
                 for (Product p : products) {
                     Float amount_1 = 0F;
                     try {
-                        if (p.getId().equals(Product.PREPAID_CARD)) {
-                            AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
-                            CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
-                            CardResponse cardResponse = getCardByUserId(userId);
-                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                            if (statusCardResponse.getCodigo().equals("00")) {
-                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
-                            } else {
-                                amount_1 = Float.valueOf(0);
-                            }
-
-                        } else {
+//                        if (p.getId().equals(Product.PREPAID_CARD)) {
+//                            AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
+//                            CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
+//                            CardResponse cardResponse = getCardByUserId(userId);
+//                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                            if (statusCardResponse.getCodigo().equals("00")) {
+//                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
+//                            } else {
+//                                amount_1 = Float.valueOf(0);
+//                            }
+//
+//                        } else {
                             amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                        }
+                        //}
 
                     } catch (NoResultException e) {
                         amount_1 = 0F;
@@ -1456,20 +1469,20 @@ public class APIOperations {
                 for (Product p : products) {
                     Float amount_1 = 0F;
                     try {
-                        if (p.getId().equals(Product.PREPAID_CARD)) {
-                            CardResponse cardResponse = getCardByUserId(userId);
-                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                            if (statusCardResponse.getCodigo().equals("00")) {
-                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
-                            } else {
-                                amount_1 = Float.valueOf(0);
-                            }
-
-                        } else {
+//                        if (p.getId().equals(Product.PREPAID_CARD)) {
+//                            CardResponse cardResponse = getCardByUserId(userId);
+//                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                            if (statusCardResponse.getCodigo().equals("00")) {
+//                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
+//                            } else {
+//                                amount_1 = Float.valueOf(0);
+//                            }
+//
+//                        } else {
                             amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                        }
+                        //}
 
                     } catch (NoResultException e) {
                         amount_1 = 0F;
@@ -1647,20 +1660,20 @@ public class APIOperations {
                 for (Product p : products) {
                     Float amount_1 = 0F;
                     try {
-                        if (p.getId().equals(Product.PREPAID_CARD)) {
-                            CardResponse cardResponse = getCardByUserId(userId);
-                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                            if (statusCardResponse.getCodigo().equals("00")) {
-                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
-                            } else {
-                                amount_1 = Float.valueOf(0);
-                            }
-
-                        } else {
+//                        if (p.getId().equals(Product.PREPAID_CARD)) {
+//                            CardResponse cardResponse = getCardByUserId(userId);
+//                            String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                            StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                            if (statusCardResponse.getCodigo().equals("00")) {
+//                                StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                                amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
+//                            } else {
+//                                amount_1 = Float.valueOf(0);
+//                            }
+//
+//                        } else {
                             amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                        }
+                        //}
 
                     } catch (NoResultException e) {
                         amount_1 = 0F;
@@ -2065,22 +2078,22 @@ public class APIOperations {
             for (Product p : productResponses) {
                 Float amount_1 = 0F;
                 try {
-                    if (p.getId().equals(Product.PREPAID_CARD)) {
-                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
-                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
-                        CardResponse cardResponse = getCardByUserId(userId);
-                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                        if (statusCardResponse.getCodigo().equals("00")) {
-                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                            amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
-                        } else {
-                            amount_1 = Float.valueOf(0);
-                        }
-
-                    } else {
+//                    if (p.getId().equals(Product.PREPAID_CARD)) {
+//                        AccountCredentialServiceClient accountCredentialServiceClient = new AccountCredentialServiceClient();
+//                        CardCredentialServiceClient cardCredentialServiceClient = new CardCredentialServiceClient();
+//                        CardResponse cardResponse = getCardByUserId(userId);
+//                        String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                        StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                        if (statusCardResponse.getCodigo().equals("00")) {
+//                            StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                            amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
+//                        } else {
+//                            amount_1 = Float.valueOf(0);
+//                        }
+//
+//                    } else {
                         amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                    }
+                    //}
                 } catch (NoResultException e) {
                     amount_1 = 0F;
                 }
@@ -2655,19 +2668,19 @@ public class APIOperations {
                     for (Product p : products) {
                         Float amount_1 = 0F;
                         try {
-                            if (p.getId().equals(Product.PREPAID_CARD)) {
-                                CardResponse cardResponse = getCardByUserId(userId);
-                                String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
-                                StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
-                                if (statusCardResponse.getCodigo().equals("00")) {
-                                    StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
-                                    amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
-                                } else {
-                                    amount_1 = Float.valueOf(0);
-                                }
-                            } else {
+//                            if (p.getId().equals(Product.PREPAID_CARD)) {
+//                                CardResponse cardResponse = getCardByUserId(userId);
+//                                String cardEncripter = Base64.encodeBase64String(encrypt(cardResponse.getNumberCard(), Constants.PUBLIC_KEY));
+//                                StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, cardEncripter);
+//                                if (statusCardResponse.getCodigo().equals("00")) {
+//                                    StatusAccountResponse accountResponse = accountCredentialServiceClient.statusAccount(Constants.CREDENTIAL_WEB_SERVICES_USER, Constants.CREDENTIAL_TIME_ZONE, statusCardResponse.getCuenta().toLowerCase().trim());
+//                                    amount_1 = Float.valueOf(accountResponse.getComprasDisponibles());
+//                                } else {
+//                                    amount_1 = Float.valueOf(0);
+//                                }
+//                            } else {
                                 amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
-                            }
+                            //}
 
                         } catch (NoResultException e) {
                             amount_1 = 0F;
