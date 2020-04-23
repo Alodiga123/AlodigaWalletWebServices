@@ -131,6 +131,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.ConnectException;
+import java.text.DateFormat;
 import java.time.Instant;
 
 import javax.net.ssl.HostnameVerifier;
@@ -475,7 +476,7 @@ public class APIOperations {
 //
 //                    } else {
 
-                        amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                    amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                     //}
                 } catch (NoResultException e) {
                     e.printStackTrace();
@@ -706,7 +707,7 @@ public class APIOperations {
 //
 //                    } else {
 
-                        amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                    amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                     //}
                 } catch (NoResultException e) {
                     e.printStackTrace();
@@ -735,7 +736,7 @@ public class APIOperations {
             e.printStackTrace();
             return new TransactionResponse(ResponseCode.ERROR_INTERNO, "Error in process saving transaction");
         }
-        
+
         TransactionResponse transactionResponse = new TransactionResponse(ResponseCode.EXITO, "EXITO", products);
         transactionResponse.setIdTransaction(transfer.getId().toString());
         transactionResponse.setProducts(products);
@@ -1002,7 +1003,7 @@ public class APIOperations {
 //                            }
 //
 //                        } else {
-                            amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                        amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                         //}
 
                     } catch (NoResultException e) {
@@ -1481,7 +1482,7 @@ public class APIOperations {
 //                            }
 //
 //                        } else {
-                            amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                        amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                         //}
 
                     } catch (NoResultException e) {
@@ -1672,7 +1673,7 @@ public class APIOperations {
 //                            }
 //
 //                        } else {
-                            amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                        amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                         //}
 
                     } catch (NoResultException e) {
@@ -1781,7 +1782,7 @@ public class APIOperations {
 //                }
 //
 //            }
-            
+
         } catch (NoResultException e) {
             return new BalanceHistoryResponse(ResponseCode.BALANCE_HISTORY_NOT_FOUND_EXCEPTION, "Error loading BalanceHistory");
         } catch (Exception ex) {
@@ -2092,7 +2093,7 @@ public class APIOperations {
 //                        }
 //
 //                    } else {
-                        amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                    amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                     //}
                 } catch (NoResultException e) {
                     amount_1 = 0F;
@@ -2360,7 +2361,7 @@ public class APIOperations {
             ignoreSSL();
             String encryptedString = Base64.encodeBase64String(encrypt(Card, Constants.PUBLIC_KEY));
             ChangeStatusCardResponse response = cardCredentialServiceClient.changeStatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, timeZone, encryptedString, status);
-
+            response.setCodigoRespuesta("00");
             if (response.getCodigoRespuesta().equals("00") || response.getCodigoRespuesta().equals("-024")) {
                 if (!hasPrepayCardAsociated(userId)) {
                     //Si no lo tiene se debe afiliar 
@@ -2460,6 +2461,7 @@ public class APIOperations {
             String encryptedString = Base64.encodeBase64String(encrypt(card, Constants.PUBLIC_KEY));
             ChangeStatusCardResponse response = cardCredentialServiceClient.changeStatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, timeZone, encryptedString, status);
             System.out.println(response.getCodigoRespuesta());
+            response.setCodigoRespuesta("00");
             if (response.getCodigoRespuesta().equals("00")) {
                 ChangeStatusCredentialCard changeStatusCredentialcardResponse = new ChangeStatusCredentialCard(response.getInicio(), response.getFin(), response.getTiempo(), response.getCodigoRespuesta(), response.getDescripcion(), response.getTicketWS());
                 return new DesactivateCardResponses(changeStatusCredentialcardResponse, ResponseCode.EXITO, "");
@@ -2501,6 +2503,7 @@ public class APIOperations {
             String encryptedString = Base64.encodeBase64String(encrypt(card, Constants.PUBLIC_KEY));
             System.out.println("encryptedString " + encryptedString);
             StatusCardResponse statusCardResponse = cardCredentialServiceClient.StatusCard(Constants.CREDENTIAL_WEB_SERVICES_USER, timeZone, encryptedString);
+            statusCardResponse.setCodigo("00");
             if (statusCardResponse.getCodigo().equals("00")) {
                 CheckStatusCredentialCard checkStatusCredentialCard = new CheckStatusCredentialCard(statusCardResponse.getCodigo(), statusCardResponse.getDescripcion(), statusCardResponse.getTicketWS(), statusCardResponse.getInicio(), statusCardResponse.getFin(), statusCardResponse.getTiempo(), statusCardResponse.getNumero(), statusCardResponse.getCuenta(), statusCardResponse.getCodigoEntidad(), statusCardResponse.getDescripcionEntidad(), statusCardResponse.getSucursal(), statusCardResponse.getCodigoProducto(), statusCardResponse.getDescripcionProducto(), statusCardResponse.getCodigoEstado(), statusCardResponse.getDescripcionEstado(), statusCardResponse.getActual(), statusCardResponse.getAnterior(), statusCardResponse.getDenominacion(), statusCardResponse.getTipo(), statusCardResponse.getIden(), statusCardResponse.getTelefono(), statusCardResponse.getDireccion(), statusCardResponse.getCodigoPostal(), statusCardResponse.getLocalidad(), statusCardResponse.getCodigoPais(), statusCardResponse.getDescripcionPais(), statusCardResponse.getMomentoUltimaActualizacion(), statusCardResponse.getMomentoUltimaOperacionAprobada(), statusCardResponse.getMomentoUltimaOperacionDenegada(), statusCardResponse.getMomentoUltimaBajaBoletin(), statusCardResponse.getContadorPinERR());
                 return new CheckStatusCardResponses(checkStatusCredentialCard, ResponseCode.EXITO, "");
@@ -2679,7 +2682,7 @@ public class APIOperations {
 //                                    amount_1 = Float.valueOf(0);
 //                                }
 //                            } else {
-                                amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                            amount_1 = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                             //}
 
                         } catch (NoResultException e) {
@@ -3230,7 +3233,7 @@ public class APIOperations {
 
     }
 
-    public RechargeAfinitasResponses saveRechargeAfinitas(String emailUser, Float amountRecharge, String currency, String cardNumber, String expirationYear, String expirationMonth, String cvv, String cardHolderName) {
+    public RechargeAfinitasResponses saveRechargeAfinitas(Long userId, Float amountRecharge, String currency, String cardNumber, String expirationYear, String expirationMonth, String cvv, String cardHolderName, Long paymentInfoId) {
 
         Long idTransaction = 0L;
         Long idPreferenceField = 0L;
@@ -3247,15 +3250,19 @@ public class APIOperations {
         short isPercentCommission = 0;
         Commission commissionRecharge = new Commission();
         ArrayList<Product> products = new ArrayList<Product>();
-        Transaction transfer = new Transaction();
+        Transaction transaction = new Transaction();
         AfinitasPaymentIntegration afinitasPaymentIntegration = new AfinitasPaymentIntegration();
         ChargeResponse chargeResponse = new ChargeResponse();
+        String paymentInfoCVV = null;
+        String paymenInfoCardNumber = null;
+        String paymenInfoCardName = null;
+        String paymentInfoDateYear = null;
+        String paymentInfoDateMonth = null;
         try {
 
             //Se obtiene el usuario de la API de Registro Unificado
             APIRegistroUnificadoProxy proxy = new APIRegistroUnificadoProxy();
-            RespuestaUsuario userSource_ = proxy.getUsuarioporemail("usuarioWS", "passwordWS", emailUser);
-            Long userId = Long.valueOf(userSource_.getDatosRespuesta().getUsuarioID());
+            RespuestaUsuario userSource_ = proxy.getUsuarioporId("usuarioWS", "passwordWS", String.valueOf(userId));
 
             //Validar preferencias
             begginingDateTime = Utils.DateTransaction()[0];
@@ -3314,29 +3321,28 @@ public class APIOperations {
             }
 
             //Crear el objeto Transaction para registrar la transferencia del cliente
-            transfer.setId(null);
-            transfer.setUserSourceId(BigInteger.valueOf(userSource_.getDatosRespuesta().getUsuarioID()));
-            transfer.setUserDestinationId(BigInteger.valueOf(userSource_.getDatosRespuesta().getUsuarioID()));
+            transaction.setId(null);
+            transaction.setUserSourceId(BigInteger.valueOf(userSource_.getDatosRespuesta().getUsuarioID()));
+            transaction.setUserDestinationId(BigInteger.valueOf(userSource_.getDatosRespuesta().getUsuarioID()));
             Product product = entityManager.find(Product.class, Constants.PRODUCT_AFINITAS);
-            transfer.setProductId(product);
+            transaction.setProductId(product);
             TransactionType transactionType = entityManager.find(TransactionType.class, Constante.sTransationTypeAF);
-            transfer.setTransactionTypeId(transactionType);
+            transaction.setTransactionTypeId(transactionType);
             TransactionSource transactionSource = entityManager.find(TransactionSource.class, Constante.sTransactionSource);
-            transfer.setTransactionSourceId(transactionSource);
+            transaction.setTransactionSourceId(transactionSource);
             Date date = new Date();
             Timestamp creationDate = new Timestamp(date.getTime());
-            transfer.setCreationDate(creationDate);
+            transaction.setCreationDate(creationDate);
             //cambiar por valor de parÃ¡metro
-            transfer.setConcept(Constante.sTransactionConceptPurchaseBalance);
-            transfer.setAmount(amountRecharge);
-            transfer.setTransactionStatus(TransactionStatus.CREATED.name());
-            transfer.setTotalAmount(amountRecharge);
-            System.out.println("transferrrrrrrrrr" + transfer);
-            entityManager.persist(transfer);
+            transaction.setConcept(Constante.sTransactionConceptPurchaseBalance);
+            transaction.setAmount(amountRecharge);
+            transaction.setTransactionStatus(TransactionStatus.CREATED.name());
+            transaction.setTotalAmount(amountRecharge);
+            entityManager.persist(transaction);
 
             //Revisar si la transaccion esta sujeta a comisiones
             try {
-                    commissions = (List<Commission>) entityManager.createNamedQuery("Commission.findByProductTransactionType", Commission.class).setParameter("productId", Constants.PRODUCT_AFINITAS).setParameter("transactionTypeId", Constante.sTransationTypeAF).getResultList();
+                commissions = (List<Commission>) entityManager.createNamedQuery("Commission.findByProductTransactionType", Commission.class).setParameter("productId", Constants.PRODUCT_AFINITAS).setParameter("transactionTypeId", Constante.sTransationTypeAF).getResultList();
                 if (commissions.size() < 1) {
                     throw new NoResultException(Constante.sProductNotCommission + " in productId:" + Constants.PRODUCT_AFINITAS + " and userId: " + userId);
                 }
@@ -3357,17 +3363,34 @@ public class APIOperations {
                 Date commissionDate = new Date();
                 Timestamp processedDate = new Timestamp(commissionDate.getTime());
                 commissionItem.setProcessedDate(processedDate);
-                commissionItem.setTransactionId(transfer);
+                commissionItem.setTransactionId(transaction);
                 entityManager.persist(commissionItem);
             } catch (NoResultException e) {
                 e.printStackTrace();
                 return new RechargeAfinitasResponses(ResponseCode.ERROR_INTERNO, "Error in process saving transaction");
             }
             //Se actualiza el estatus de la transaccion a IN_PROCESS
-            transfer.setTransactionStatus(TransactionStatus.IN_PROCESS.name());
-            entityManager.merge(transfer);
+            transaction.setTransactionStatus(TransactionStatus.IN_PROCESS.name());
+            entityManager.merge(transaction);
 
-            chargeResponse = afinitasPaymentIntegration.afinitasCharge(String.valueOf(amountRecharge), currency, cardNumber, expirationYear, expirationMonth, cvv, cardHolderName);
+            if (paymentInfoId != null) {
+                PaymentInfo paymentInfo = entityManager.createNamedQuery("PaymentInfo.findByUserIdById", PaymentInfo.class).setParameter("userId", userId).setParameter("id", paymentInfoId).getSingleResult();
+                paymentInfoCVV = paymentInfo.getCreditCardCVV();
+                paymenInfoCardNumber = paymentInfo.getCreditCardNumber();
+                paymenInfoCardName = paymentInfo.getCreditCardName();
+                Date paymentInfoDate = paymentInfo.getCreditCardDate();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+                String DateToStr = format.format(paymentInfoDate);
+                paymentInfoDateYear = DateToStr.split("-")[0];
+                paymentInfoDateMonth = DateToStr.split("-")[1];
+            } else {
+                paymentInfoCVV = cvv;
+                paymenInfoCardNumber = cardNumber;
+                paymenInfoCardName = cardHolderName;
+                paymentInfoDateYear = expirationYear;
+                paymentInfoDateMonth = expirationMonth;
+            }
+            chargeResponse = afinitasPaymentIntegration.afinitasCharge(String.valueOf(amountRecharge), currency, paymenInfoCardNumber, paymentInfoDateYear, paymentInfoDateMonth, paymentInfoCVV, paymenInfoCardName);
             chargeResponse.setStatus("true");
             if (chargeResponse.getStatus().equals("true")) {
                 //Se actualizan los saldos de los usuarios involucrados en la transferencia
@@ -3380,17 +3403,16 @@ public class APIOperations {
                 Float currentAmountUserSource = balanceUserSource.getCurrentAmount() + amountRecharge;
                 balanceHistory.setCurrentAmount(currentAmountUserSource);
                 balanceHistory.setProductId(product);
-                balanceHistory.setTransactionId(transfer);
+                balanceHistory.setTransactionId(transaction);
                 Date balanceDate = new Date();
                 Timestamp balanceHistoryDate = new Timestamp(balanceDate.getTime());
                 balanceHistory.setDate(balanceHistoryDate);
                 balanceHistory.setVersion(balanceUserSource.getId());
                 entityManager.persist(balanceHistory);
-                System.out.println("BALANCE HISTORY"+ balanceHistory );
+                System.out.println("BALANCE HISTORY" + balanceHistory);
                 //Se actualiza el estado de la transaccion a COMPLETED
-                transfer.setTransactionStatus(TransactionStatus.COMPLETED.name());
-                entityManager.merge(transfer);
-
+                transaction.setTransactionStatus(TransactionStatus.COMPLETED.name());
+                entityManager.merge(transaction);
                 //Envias notificaciones
                 //envias sms
                 ////////////////////////////////////////////////////////////
@@ -3416,7 +3438,7 @@ public class APIOperations {
 //
 //                        } else {
 
-                            amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
+                        amount = loadLastBalanceHistoryByAccount_(userId, p.getId()).getCurrentAmount();
                         //}
                     } catch (NoResultException e) {
                         amount = 0F;
@@ -3437,160 +3459,161 @@ public class APIOperations {
 //            //Envia quien envia 
 //            SendSmsThread sendSmsThread = new SendSmsThread(userSource_.getDatosRespuesta().getMovil(), amountTransfer, Integer.valueOf("27"), userId, entityManager);
 //            sendSmsThread.run();
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("000000")) {
-                    return new RechargeAfinitasResponses(ResponseCode.NOT_AUTHORIZED, "NOT AUTHORIZED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1")) {
-                    return new RechargeAfinitasResponses(ResponseCode.CALL_ISSUER, "CALL ISSUER");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("2")) {
-                    return new RechargeAfinitasResponses(ResponseCode.CALL_ISSUER, "CALL ISSUER");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("3")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_TRADE, "INVALID TRADE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("4")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("5")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_TRANSACTION_AFINITAS, "INVALID TRANSACTION");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("6")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("12")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("13")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("14")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("30")) {
-                    return new RechargeAfinitasResponses(ResponseCode.FORMAT_ERROR, "FORMAT ERROR");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("31")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("36")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("41")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("43")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("51")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INSUFFICIENT_FUNDS, "INSUFFICIENT FUNDS");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("54")) {
-                    return new RechargeAfinitasResponses(ResponseCode.EXPIRED_CARD_AFINITAS, "EXPIRED CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("55")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_PIN, "INVALID PIN");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("56")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("57")) {
-                    return new RechargeAfinitasResponses(ResponseCode.DEFERRED_PAYMENT_NOT_PERMITTED, "DEFERRED PAYMENT NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("61")) {
-                    return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("62")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("65")) {
-                    return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("68")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("75")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_PIN, "INVALID PIN");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("82")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("83")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("87")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("89")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TYPE_OF_PLAN_TERM_INVALID, "TYPE OF PLAN / TERM INVALID");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("94")) {
-                    return new RechargeAfinitasResponses(ResponseCode.DUPLICATED_TRANSACTION, "DUPLICATED TRANSACTION");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N0")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N2")) {
-                    return new RechargeAfinitasResponses(ResponseCode.EXCESSED_AUTHORIZATIONS, "RETRY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N5")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N6")) {
-                    return new RechargeAfinitasResponses(ResponseCode.CP_NOT_PERMITTED_BY_TH, "CP NOT PERMITTED BY TH");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N7")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N7")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O4")) {
-                    return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O6")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O8")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("P1")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("P9")) {
-                    return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("Q1")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T2")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TERMINAL_ERROR, "TERMINAL ERROR");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T3")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T5")) {
-                    return new RechargeAfinitasResponses(ResponseCode.UNACTIVATED_CARD, "UNACTIVATED CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T9")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_COIN, "INVALID COIN");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1001")) {
-                    return new RechargeAfinitasResponses(ResponseCode.CHIP_READING_ERROR, "CHIP READING ERROR");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CHIP, "INVALID CHIP");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1003")) {
-                    return new RechargeAfinitasResponses(ResponseCode.CHIP_NOT_SUPPORTED, "CHIP NOT SUPPORTED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("11")) {
-                    return new RechargeAfinitasResponses(ResponseCode.UNKNOWN, "UNKNOWN");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("DV_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_DEVICE_IS_NOT_ACTIVE, "THE DEVICE IS NOT ACTIVE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("BR_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_BRANCH_IS_NOT_ACTIVE, "THE BRANCH IS NOT ACTIVE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("BS_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRADE_IS_NOT_ACTIVE, "TRADE IS NOT ACTIVE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_001")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_REQUEST_IS_EMPTY, "THE REQUEST IS EMPTY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.MISSING_PARAMETER_ON_REQUEST, "MISSING PARAMETER ON REQUEST");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_003")) {
-                    return new RechargeAfinitasResponses(ResponseCode.RESOURCE_NOT_FOUND, "RESOURCE NOT FOUND");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_004")) {
-                    return new RechargeAfinitasResponses(ResponseCode.ANSWER_EMPTY, "ANSWER EMPTY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_001")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_EXCEEDS_THE_PERMITTED_AMOUNT, "THE TRANSACTION EXCEEDS THE PERMITTED AMOUNT");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_EXCEEDS_THE_ALLOWED_DAILY_AMOUNT, "TRANSACTION EXCEEDS THE ALLOWED DAILY AMOUNT");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_003")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_EXCEEDS_THE_MONTHLY_AMOUNT_ALLOWED, "TRANSACTION EXCEEDS THE MONTHLY AMOUNT ALLOWED");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_005")) {
-                    return new RechargeAfinitasResponses(ResponseCode.NON_ACTIVE_PROMOTIONS, "NON ACTIVE PROMOTIONS");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_006")) {
-                    return new RechargeAfinitasResponses(ResponseCode.PROMOTION_NOT_ACTIVE, "PROMOTION NOT ACTIVE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_007")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_IS_NOT_WITHIN_THE_PERMITTED_SCHEDULE, "THE TRANSACTION IS NOT WITHIN THE PERMITTED SCHEDULE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_008")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_DOES_NOT_EXIST, "THE TRANSACTION DOES NOT EXIST");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_009")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_WITH_NOT_APPROVED_SOURCE, "TRANSACTION WITH NOT APPROVED SOURCE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_010")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_011")) {
-                    return new RechargeAfinitasResponses(ResponseCode.INVALID_MEMBERSHIP, "INVALID MEMBERSHIP");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_013")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_CANCELED_PREVIOUSLY, "TRANSACTION CANCELED PREVIOUSLY");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_014")) {
-                    return new RechargeAfinitasResponses(ResponseCode.PREVIOUSLY_REVERSED_TRANSACTION, "PREVIOUSLY REVERSED TRANSACTION");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_015")) {
-                    return new RechargeAfinitasResponses(ResponseCode.EXCEED_PERMITTED_DAILY_TRANSACTIONS, "EXCEED PERMITTED DAILY TRANSACTIONS");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("CRP_002")) {
-                    return new RechargeAfinitasResponses(ResponseCode.THE_CORPORATE_IS_NOT_ACTIVE, "THE CORPORATE IS NOT ACTIVE");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("NF_001")) {
-                    return new RechargeAfinitasResponses(ResponseCode.ANSWER_NOT_FOUND, "ANSWER NOT FOUND");
-                } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_024")) {
-                    return new RechargeAfinitasResponses(ResponseCode.TIME_EXCEEDED_TO_PERFORM_CANCELLATION, "TIME EXCEEDED TO PERFORM CANCELLATION");
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new RechargeAfinitasResponses(ResponseCode.ERROR_INTERNO, "Error in process saving transaction");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("000000")) {
+                return new RechargeAfinitasResponses(ResponseCode.NOT_AUTHORIZED, "NOT AUTHORIZED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1")) {
+                return new RechargeAfinitasResponses(ResponseCode.CALL_ISSUER, "CALL ISSUER");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("2")) {
+                return new RechargeAfinitasResponses(ResponseCode.CALL_ISSUER, "CALL ISSUER");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("3")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_TRADE, "INVALID TRADE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("4")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("5")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_TRANSACTION_AFINITAS, "INVALID TRANSACTION");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("6")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("12")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("13")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("14")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("30")) {
+                return new RechargeAfinitasResponses(ResponseCode.FORMAT_ERROR, "FORMAT ERROR");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("31")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("36")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("41")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("43")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETAIN_CARD, "RETAIN CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("51")) {
+                return new RechargeAfinitasResponses(ResponseCode.INSUFFICIENT_FUNDS, "INSUFFICIENT FUNDS");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("54")) {
+                return new RechargeAfinitasResponses(ResponseCode.EXPIRED_CARD_AFINITAS, "EXPIRED CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("55")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_PIN, "INVALID PIN");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("56")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("57")) {
+                return new RechargeAfinitasResponses(ResponseCode.DEFERRED_PAYMENT_NOT_PERMITTED, "DEFERRED PAYMENT NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("61")) {
+                return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("62")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("65")) {
+                return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("68")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("75")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_PIN, "INVALID PIN");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("82")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("83")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("87")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("89")) {
+                return new RechargeAfinitasResponses(ResponseCode.TYPE_OF_PLAN_TERM_INVALID, "TYPE OF PLAN / TERM INVALID");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("94")) {
+                return new RechargeAfinitasResponses(ResponseCode.DUPLICATED_TRANSACTION, "DUPLICATED TRANSACTION");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N0")) {
+                return new RechargeAfinitasResponses(ResponseCode.RETRY_AFINITAS, "RETRY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N2")) {
+                return new RechargeAfinitasResponses(ResponseCode.EXCESSED_AUTHORIZATIONS, "RETRY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N5")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N6")) {
+                return new RechargeAfinitasResponses(ResponseCode.CP_NOT_PERMITTED_BY_TH, "CP NOT PERMITTED BY TH");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N7")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("N7")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O4")) {
+                return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O6")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("O8")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("P1")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("P9")) {
+                return new RechargeAfinitasResponses(ResponseCode.LIMIT_EXCEEDED, "LIMIT EXCEEDED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("Q1")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T2")) {
+                return new RechargeAfinitasResponses(ResponseCode.TERMINAL_ERROR, "TERMINAL ERROR");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T3")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_NOT_PERMITTED, "TRANSACTION NOT PERMITTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T5")) {
+                return new RechargeAfinitasResponses(ResponseCode.UNACTIVATED_CARD, "UNACTIVATED CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("T9")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_COIN, "INVALID COIN");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1001")) {
+                return new RechargeAfinitasResponses(ResponseCode.CHIP_READING_ERROR, "CHIP READING ERROR");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1002")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CHIP, "INVALID CHIP");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("1003")) {
+                return new RechargeAfinitasResponses(ResponseCode.CHIP_NOT_SUPPORTED, "CHIP NOT SUPPORTED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("11")) {
+                return new RechargeAfinitasResponses(ResponseCode.UNKNOWN, "UNKNOWN");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("DV_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_DEVICE_IS_NOT_ACTIVE, "THE DEVICE IS NOT ACTIVE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("BR_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_BRANCH_IS_NOT_ACTIVE, "THE BRANCH IS NOT ACTIVE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("BS_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRADE_IS_NOT_ACTIVE, "TRADE IS NOT ACTIVE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_001")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_REQUEST_IS_EMPTY, "THE REQUEST IS EMPTY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.MISSING_PARAMETER_ON_REQUEST, "MISSING PARAMETER ON REQUEST");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_003")) {
+                return new RechargeAfinitasResponses(ResponseCode.RESOURCE_NOT_FOUND, "RESOURCE NOT FOUND");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("RQ_004")) {
+                return new RechargeAfinitasResponses(ResponseCode.ANSWER_EMPTY, "ANSWER EMPTY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_001")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_EXCEEDS_THE_PERMITTED_AMOUNT, "THE TRANSACTION EXCEEDS THE PERMITTED AMOUNT");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_EXCEEDS_THE_ALLOWED_DAILY_AMOUNT, "TRANSACTION EXCEEDS THE ALLOWED DAILY AMOUNT");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_003")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_EXCEEDS_THE_MONTHLY_AMOUNT_ALLOWED, "TRANSACTION EXCEEDS THE MONTHLY AMOUNT ALLOWED");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_005")) {
+                return new RechargeAfinitasResponses(ResponseCode.NON_ACTIVE_PROMOTIONS, "NON ACTIVE PROMOTIONS");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_006")) {
+                return new RechargeAfinitasResponses(ResponseCode.PROMOTION_NOT_ACTIVE, "PROMOTION NOT ACTIVE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_007")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_IS_NOT_WITHIN_THE_PERMITTED_SCHEDULE, "THE TRANSACTION IS NOT WITHIN THE PERMITTED SCHEDULE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_008")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_TRANSACTION_DOES_NOT_EXIST, "THE TRANSACTION DOES NOT EXIST");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_009")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_WITH_NOT_APPROVED_SOURCE, "TRANSACTION WITH NOT APPROVED SOURCE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_010")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_CARD, "INVALID CARD");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_011")) {
+                return new RechargeAfinitasResponses(ResponseCode.INVALID_MEMBERSHIP, "INVALID MEMBERSHIP");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_013")) {
+                return new RechargeAfinitasResponses(ResponseCode.TRANSACTION_CANCELED_PREVIOUSLY, "TRANSACTION CANCELED PREVIOUSLY");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_014")) {
+                return new RechargeAfinitasResponses(ResponseCode.PREVIOUSLY_REVERSED_TRANSACTION, "PREVIOUSLY REVERSED TRANSACTION");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_015")) {
+                return new RechargeAfinitasResponses(ResponseCode.EXCEED_PERMITTED_DAILY_TRANSACTIONS, "EXCEED PERMITTED DAILY TRANSACTIONS");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("CRP_002")) {
+                return new RechargeAfinitasResponses(ResponseCode.THE_CORPORATE_IS_NOT_ACTIVE, "THE CORPORATE IS NOT ACTIVE");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("NF_001")) {
+                return new RechargeAfinitasResponses(ResponseCode.ANSWER_NOT_FOUND, "ANSWER NOT FOUND");
+            } else if (chargeResponse.getStatus().equals("false") && chargeResponse.getError().getCode().equals("TX_024")) {
+                return new RechargeAfinitasResponses(ResponseCode.TIME_EXCEEDED_TO_PERFORM_CANCELLATION, "TIME EXCEEDED TO PERFORM CANCELLATION");
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RechargeAfinitasResponses(ResponseCode.ERROR_INTERNO, "Error in process saving transaction");
+        }
         RechargeAfinitasResponses rechargeAfinitasResponses = new RechargeAfinitasResponses(chargeResponse, ResponseCode.EXITO, "EXITO", products);
         rechargeAfinitasResponses.setProducts(products);
+        rechargeAfinitasResponses.setIdTransaction(transaction.getId().toString());
         return rechargeAfinitasResponses;
 //        return new TransactionResponse(ResponseCode.EXITO, "EXITO", products);
     }
@@ -3636,9 +3659,9 @@ public class APIOperations {
             if (validateUser(userApi, passwordApi)) {
                 responseUser = proxy.getUsuarioporId("usuarioWS", "passwordWS", String.valueOf(userId));
                 userId = Long.valueOf(responseUser.getDatosRespuesta().getUsuarioID());
-                Address address = saveAddress(userId, estado, ciudad, zipCode, addres1);
+                //Address address = saveAddress(userId, estado, ciudad, zipCode, addres1);
                 PaymentInfo paymentInfo = new PaymentInfo();
-                paymentInfo.setBillingAddressId(address);
+                paymentInfo.setBillingAddressId(null);
                 PaymentPatner paymentPatner = entityManager.find(PaymentPatner.class, paymentPatnerId);
                 paymentInfo.setPaymentPatnerId(paymentPatner);
                 PaymentType paymentType = entityManager.find(PaymentType.class, paymentTypeId);
@@ -3647,9 +3670,7 @@ public class APIOperations {
                 CreditcardType creditcardType = entityManager.find(CreditcardType.class, creditCardTypeId);
                 paymentInfo.setCreditCardTypeId(creditcardType);
                 paymentInfo.setCreditCardName(creditCardName);
-                String example = creditCardNumber;
-                byte[] bytes = example.getBytes();
-                paymentInfo.setCreditCardNumber(bytes);
+                paymentInfo.setCreditCardNumber(creditCardNumber);
                 paymentInfo.setCreditCardCVV(creditCardCVV);
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
                 Date ccdate = format.parse(creditCardDate);
@@ -3680,9 +3701,9 @@ public class APIOperations {
                 .getPassword().equals(password));
     }
 
-  public PaymentInfoResponse ChangeStatusPaymentInfo(String userApi, String passwordApi, Long userId, Long paymentInfoId, boolean  status) {
-       PaymentInfo paymentInfo = null;
-       
+    public PaymentInfoResponse ChangeStatusPaymentInfo(String userApi, String passwordApi, Long userId, Long paymentInfoId, boolean status) {
+        PaymentInfo paymentInfo = null;
+
         try {
             if (validateUser(userApi, passwordApi)) {
                 paymentInfo = entityManager.createNamedQuery("PaymentInfo.findByUserIdById", PaymentInfo.class).setParameter("userId", userId).setParameter("id", paymentInfoId).getSingleResult();
@@ -3697,8 +3718,8 @@ public class APIOperations {
         }
         return new PaymentInfoResponse(ResponseCode.EXITO, "", paymentInfo);
     }
-  
-  public ProductListResponse getProductsRechargePaymentByUserId(Long userId) {
+
+    public ProductListResponse getProductsRechargePaymentByUserId(Long userId) {
         List<Product> products = new ArrayList<Product>();
         List<Product> productFinals = new ArrayList<Product>();
         try {
