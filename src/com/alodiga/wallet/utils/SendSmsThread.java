@@ -45,6 +45,12 @@ public class SendSmsThread extends Thread {
         this.sendSmsType = sendSmsType;
     }
 
+    public SendSmsThread(String movil, String codigo, Integer sendSmsType) {
+        this.movil = movil;
+        this.codigo = codigo;
+        this.sendSmsType = sendSmsType;
+    }
+
     public SendSmsThread(String movil, String codigo_, Long languageId) {
         this.codigo = codigo_;
         this.movil = movil;
@@ -152,6 +158,13 @@ public class SendSmsThread extends Thread {
                 // code block 
                 message = getLangujeByPhoneNumber((movil).toString()).equals(Constants.SPANISH_LANGUAGE) ? "Billetera Alodiga, Usted a recibido una transferencia el dia: " + sdf.format(timestamp) + " por un monto de: " + amountPayment + " Bs." : "Alodiga Wallet, You have received a transfer the day: " + sdf.format(timestamp) + " by a sum of: " + amountPayment + " $.";
                 break;
+
+            case Constants.SEND_TYPE_SMS_TEST:
+                // code block 
+                message = getLangujeByPhoneNumber((movil).toString()).equals(Constants.SPANISH_LANGUAGE) ? "Billetera Alodiga, Su codigo de seguridad para el registro es: " + codigo : "Alodiga Wallet, Your security code is: " + codigo;
+                break;
+                
+                
         }
         try {
             //String message = getLangujeByPhoneNumber(movil).equals(Constante.SPANISH_LANGUAGE) ? "Billetera Alodiga, Su codigo de seguridad para el registro es: " + codigo : "Alodiga Wallet, Your security code is: " + codigo ;
@@ -190,9 +203,10 @@ public class SendSmsThread extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (movil.substring(0, 2).equals("57")) {
-                //TODO:
-                //Colombia
+            } else if (movil.substring(0, 2).equals("52")) {
+                //lo envia por TWILIO A MEXICO
+                TwilioSmsSenderProxy proxy = new TwilioSmsSenderProxy();
+                proxy.sendTwilioSMS(movil, message);
             }
         } catch (RemoteException ex) {
             ex.printStackTrace();

@@ -542,4 +542,11 @@ public class APIAlodigaWallet {
         return operations.getProductsRechargePaymentByUserId(Long.valueOf(userId));
     }
     
+    
+    @WebMethod
+    public ProductListResponse generarCodigoMovilSMS(
+            @WebParam(name = "movil") String movil,
+            @WebParam(name = "codigo") String codigo) {
+        return operations.generarCodigoMovilSMS(movil, codigo);
+    }
 }
