@@ -1851,7 +1851,7 @@ public class APIOperations {
         usuario.setNombre("Kerwin");
         usuario.setApellido("Gomez");
         usuario.setCredencial("DAnye");
-        usuario.setEmail("moisegrat@hotmail.com");
+        usuario.setEmail("moisegrat12@hotmail.com");
         usuario.setMovil("584241934005");
         Cuenta cunCuenta = new Cuenta();
         cunCuenta.setNumeroCuenta("01050614154515461528");
@@ -1869,6 +1869,19 @@ public class APIOperations {
         System.out.println("body: " + mail.getBody());
         try {
             AmazonSESSendMail.SendMail(mail.getSubject(), mail.getBody(), mail.getTo().get(0));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void sendMail(String subject,String body, String to, String from) {
+        Mail mail = new Mail(subject,body);
+        mail.setSubject(subject);
+        mail.setFrom(from);
+        mail.setBody(body);
+        
+        try {
+            AmazonSESSendMail.SendMail(subject, body, to);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

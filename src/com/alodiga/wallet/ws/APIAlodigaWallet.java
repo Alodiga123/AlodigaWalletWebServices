@@ -549,4 +549,16 @@ public class APIAlodigaWallet {
             @WebParam(name = "codigo") String codigo) {
         return operations.generarCodigoMovilSMS(movil, codigo);
     }
+  
+    
+     @WebMethod
+    public void sendMail(
+            @WebParam(name = "subject") String subject,
+            @WebParam(name = "body") String body,
+            @WebParam(name = "to") String to,
+            @WebParam(name = "from") String from) {        
+       operations.sendMail(subject, body,to,from);
+    }
+    
+    
 }
