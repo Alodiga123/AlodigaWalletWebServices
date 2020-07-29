@@ -222,4 +222,10 @@ public class Constants {
     public static final Long PAYMENT_PATNER = 2L;
     public static final Long PAYMENT_TYPE = 2L;
     
+    
+    //PLAID
+    public static final String CLIENTID = "5eea3c83ca4e880014b64ce2";
+    public static final String SECRET = "77ce7afbc3853883de5fc4ec90bd30";
+    
+    
 }

@@ -24,14 +24,21 @@ import com.alodiga.wallet.respuestas.CountryListResponse;
 import com.alodiga.wallet.respuestas.CreditCardListResponse;
 import com.alodiga.wallet.respuestas.CumplimientResponse;
 import com.alodiga.wallet.respuestas.DesactivateCardResponses;
+import com.alodiga.wallet.respuestas.ExchangeTokenPlaidResponses;
 import com.alodiga.wallet.respuestas.LanguageListResponse;
 import com.alodiga.wallet.respuestas.PaymentInfoListResponse;
 import com.alodiga.wallet.respuestas.PaymentInfoResponse;
 import com.alodiga.wallet.respuestas.ProductListResponse;
 import com.alodiga.wallet.respuestas.ProductResponse;
+import com.alodiga.wallet.respuestas.PublicTokenPlaidResponses;
 import com.alodiga.wallet.respuestas.RechargeAfinitasResponses;
 import com.alodiga.wallet.respuestas.RechargeValidationResponse;
 import com.alodiga.wallet.respuestas.RemittanceResponse;
+import com.alodiga.wallet.respuestas.RetriveAuthPlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveBalancePlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveIdentityPlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveIncomePlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveTransactionPlaidResponses;
 import com.alodiga.wallet.respuestas.TopUpCountryListResponse;
 import com.alodiga.wallet.respuestas.TopUpInfoListResponse;
 import com.alodiga.wallet.respuestas.UserHasProductResponse;
@@ -566,4 +573,43 @@ public class APIAlodigaWallet {
             @WebParam(name = "message") String message) {
        operations.sendSMS(movil, message);
     }
+    
+    @WebMethod
+    public ExchangeTokenPlaidResponses publicTokenPlaid(
+            @WebParam(name = "methods") String methods) {
+       return operations.publicTokenPlaid(methods);
+        
+    }
+    
+    @WebMethod
+    public RetriveAuthPlaidResponses retriveAuthPlaid() {
+       return operations.retriveAuthPlaid();
+        
+    }
+    
+    @WebMethod
+    public RetriveTransactionPlaidResponses retriveTransactionPlaid() {
+       return operations.retriveTransactionPlaid();
+        
+    }
+     
+    @WebMethod
+    public RetriveBalancePlaidResponses retriveBalancePlaid() {
+       return operations.retriveBalancePlaid();
+        
+    }
+    
+    @WebMethod
+    public RetriveIdentityPlaidResponses retriveIdentityPlaid() {
+       return operations.retriveIdentityPlaid();
+        
+    }
+    
+    @WebMethod
+    public RetriveIncomePlaidResponses retriveIncomePlaid() {
+       return operations.retriveIncomePlaid();
+        
+    }
+    
+    
 }

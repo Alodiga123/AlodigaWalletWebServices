@@ -12,6 +12,13 @@ import com.alodiga.businessportal.ws.APIBusinessPortalWSProxy;
 import com.alodiga.card.credential.response.ChangeStatusCardResponse;
 import com.alodiga.card.credential.response.StatusCardResponse;
 import com.alodiga.massiva.sms.SendSmsMassiva;
+import com.alodiga.plaid.response.ExchangeTokenResponse;
+import com.alodiga.plaid.response.RetriveAuthResponse;
+import com.alodiga.plaid.response.RetriveBalanceResponse;
+import com.alodiga.plaid.response.RetriveIdentityResponse;
+import com.alodiga.plaid.response.RetriveIncomeResponse;
+import com.alodiga.plaid.response.RetriveTransactionResponse;
+import com.alodiga.plaid.response.TokenResponse;
 import com.alodiga.transferto.integration.connection.RequestManager;
 import com.alodiga.transferto.integration.model.MSIDN_INFOResponse;
 import com.alodiga.transferto.integration.model.ReserveResponse;
@@ -92,12 +99,19 @@ import com.alodiga.wallet.respuestas.CountryResponse;
 import com.alodiga.wallet.respuestas.CreditCardListResponse;
 import com.alodiga.wallet.respuestas.CumplimientResponse;
 import com.alodiga.wallet.respuestas.DesactivateCardResponses;
+import com.alodiga.wallet.respuestas.ExchangeTokenPlaidResponses;
 import com.alodiga.wallet.respuestas.LanguageListResponse;
 import com.alodiga.wallet.respuestas.PaymentInfoListResponse;
 import com.alodiga.wallet.respuestas.PaymentInfoResponse;
 import com.alodiga.wallet.respuestas.ProductListResponse;
+import com.alodiga.wallet.respuestas.PublicTokenPlaidResponses;
 import com.alodiga.wallet.respuestas.RechargeAfinitasResponses;
 import com.alodiga.wallet.respuestas.RemittanceResponse;
+import com.alodiga.wallet.respuestas.RetriveAuthPlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveBalancePlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveIdentityPlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveIncomePlaidResponses;
+import com.alodiga.wallet.respuestas.RetriveTransactionPlaidResponses;
 import com.alodiga.wallet.respuestas.TopUpCountryListResponse;
 import com.alodiga.wallet.respuestas.TopUpInfoListResponse;
 import com.alodiga.wallet.respuestas.TransactionListResponse;
@@ -139,11 +153,13 @@ import java.rmi.ConnectException;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Random;
+import java.util.logging.Level;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import org.apache.commons.codec.binary.Base64;
+import plaidclientintegration.PlaidClientIntegration;
 
 @Stateless(name = "FsProcessorWallet", mappedName = "ejb/FsProcessorWallet")
 @TransactionManagement(TransactionManagementType.CONTAINER)
@@ -3939,6 +3955,158 @@ public class APIOperations {
             }
         } catch (RemoteException ex) {
             ex.printStackTrace();
+        }
+
+    }
+
+    public ExchangeTokenPlaidResponses publicTokenPlaid(String methods) {
+
+        TokenResponse tokenResponse = new TokenResponse();
+        ExchangeTokenResponse exchangeTokenResponse = new ExchangeTokenResponse();
+        
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            tokenResponse = plaidClientIntegration.plaidCreateItem(methods);
+            exchangeTokenResponse = plaidClientIntegration.plaidExchangeToken(tokenResponse.getPublic_token());
+            ExchangeTokenPlaidResponses exchangeTokenPlaidResponses = new ExchangeTokenPlaidResponses(exchangeTokenResponse, ResponseCode.EXITO, "");
+            exchangeTokenPlaidResponses.setTokenResponse(tokenResponse.getPublic_token());
+            return exchangeTokenPlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new ExchangeTokenPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR BALANCE");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new ExchangeTokenPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR token");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ExchangeTokenPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR token");
+        }
+
+    }
+
+    public RetriveAuthPlaidResponses retriveAuthPlaid() {
+
+        RetriveAuthResponse retriveAuthResponse = new RetriveAuthResponse();
+        String clientId = Constants.CLIENTID;
+        String secret = Constants.SECRET;
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            retriveAuthResponse = plaidClientIntegration.plaidRetrieveAuth(clientId,secret);
+            RetriveAuthPlaidResponses retriveAuthPlaidResponses = new RetriveAuthPlaidResponses(retriveAuthResponse, ResponseCode.EXITO, "EXITO");
+            return retriveAuthPlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new RetriveAuthPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR Auth");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new RetriveAuthPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR Auth");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new RetriveAuthPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR Auth");
+        }
+
+    }
+
+    public RetriveTransactionPlaidResponses retriveTransactionPlaid() {
+
+        RetriveTransactionResponse retriveTransactionResponse = new RetriveTransactionResponse();
+        String clientId = Constants.CLIENTID;
+        String secret = Constants.SECRET;
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            retriveTransactionResponse = plaidClientIntegration.plaidRetrieveTransaction(clientId,secret);
+            RetriveTransactionPlaidResponses retriveTransactionPlaidResponses = new RetriveTransactionPlaidResponses(retriveTransactionResponse, ResponseCode.EXITO, "EXITO");
+            return retriveTransactionPlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new RetriveTransactionPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR TRANSACTION");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new RetriveTransactionPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR TRANSACTION");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new RetriveTransactionPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR TRANSACTION");
+        }
+
+    }
+
+    public RetriveBalancePlaidResponses retriveBalancePlaid() {
+
+        RetriveBalanceResponse retriveBalanceResponse = new RetriveBalanceResponse();
+        String clientId = Constants.CLIENTID;
+        String secret = Constants.SECRET;
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            retriveBalanceResponse = plaidClientIntegration.plaidRetrieveBalance(clientId, secret);
+            RetriveBalancePlaidResponses retriveBalancePlaidResponses = new RetriveBalancePlaidResponses(retriveBalanceResponse, ResponseCode.EXITO, "EXITO");
+            return retriveBalancePlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new RetriveBalancePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR BALANCE");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new RetriveBalancePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR BALANCE");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new RetriveBalancePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR BALANCE");
+        }
+
+    }
+
+    public RetriveIdentityPlaidResponses retriveIdentityPlaid() {
+
+        RetriveIdentityResponse retriveIdentityResponse = new RetriveIdentityResponse();
+        String clientId = Constants.CLIENTID;
+        String secret = Constants.SECRET;
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            retriveIdentityResponse = plaidClientIntegration.plaidRetrieveIdentity(clientId, secret);
+            RetriveIdentityPlaidResponses retriveIdentityPlaidResponses = new RetriveIdentityPlaidResponses(retriveIdentityResponse, ResponseCode.EXITO, "EXITO");
+            return retriveIdentityPlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new RetriveIdentityPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR IDENTITY");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new RetriveIdentityPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR IDENTITY");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new RetriveIdentityPlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR IDENTITY");
+        }
+
+    }
+
+    public RetriveIncomePlaidResponses retriveIncomePlaid() {
+
+        RetriveIncomeResponse retriveIncomeResponse = new RetriveIncomeResponse();
+        String clientId = Constants.CLIENTID;
+        String secret = Constants.SECRET;
+        try {
+            PlaidClientIntegration plaidClientIntegration = new PlaidClientIntegration();
+
+            retriveIncomeResponse = plaidClientIntegration.plaidRetrieveIncome(clientId, secret);
+            RetriveIncomePlaidResponses retriveIncomePlaidResponses = new RetriveIncomePlaidResponses(retriveIncomeResponse, ResponseCode.EXITO, "EXITO");
+            return retriveIncomePlaidResponses;
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+            return new RetriveIncomePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR INCOME");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new RetriveIncomePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR INCOME");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new RetriveIncomePlaidResponses(ResponseCode.ERROR_INTERNO, "ERROR INCOME");
         }
 
     }
