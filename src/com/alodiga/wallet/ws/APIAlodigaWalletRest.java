@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.alodiga.wallet.bean.APIOperations;
+
 import com.alodiga.wallet.respuestas.Response;
 
 @Path("/alodigaWallet")

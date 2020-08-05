@@ -1,7 +1,6 @@
 package com.alodiga.wallet.utils;
 
-import com.alodiga.wallet.model.BalanceHistory;
-import com.alodiga.wallet.model.Transaction;
+
 import com.ericsson.alodiga.ws.Usuario;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

@@ -1,7 +1,7 @@
 package com.alodiga.wallet.respuestas;
 
 
-import com.alodiga.wallet.common.model.Country;
+import com.alodiga.wallet.common.model.City;
 import java.util.Date;
 import java.util.List;
 
@@ -12,27 +12,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CountryListResponse extends Response {
+public class CityListResponse extends Response {
 
-	public List<Country> countries;
+	public List<City> citys;
 	
-	public CountryListResponse() {
+	public CityListResponse() {
 		super();
 	}
 	
-	public CountryListResponse(ResponseCode code) {
+	public CityListResponse(ResponseCode code) {
 		super(new Date(), code.getCodigo(), code.name());
-		this.countries = null;
+		this.citys = null;
 	}
 	
-	public CountryListResponse(ResponseCode code, String mensaje) {
+	public CityListResponse(ResponseCode code, String mensaje) {
 		super(new Date(), code.getCodigo(), mensaje);
-		this.countries = null;
+		this.citys = null;
 	}
 
-	public CountryListResponse(ResponseCode code, String mensaje, List<Country> countries) {
+	public CityListResponse(ResponseCode code, String mensaje, List<City> citys) {
 		super(new Date(), code.getCodigo(), mensaje);
-		this.countries = countries;
+		this.citys = citys;
 	}
         
 }

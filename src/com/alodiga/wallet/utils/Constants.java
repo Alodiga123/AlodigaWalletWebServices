@@ -227,5 +227,11 @@ public class Constants {
     public static final String CLIENTID = "5eea3c83ca4e880014b64ce2";
     public static final String SECRET = "77ce7afbc3853883de5fc4ec90bd30";
     
+    //PORTAL
+    public static final int ORIGIN_APPLICATION_APP_ALODIGA_WALLET_ID = 1;
+    public static final int ORIGIN_APPLICATION_ADMIN_WALLET_ID = 2;
+    
+    
+    public static final int STATUS_TRANSACTION_APPROVED_REQUEST = 1;
     
 }
