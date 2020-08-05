@@ -2,6 +2,8 @@ package com.alodiga.wallet.ws;
 
 import com.alodiga.wallet.bean.APIAdminWalletOperations;
 import com.alodiga.wallet.common.model.Sequences;
+import com.alodiga.wallet.respuestas.AccountBankListResponse;
+import com.alodiga.wallet.respuestas.AccountBankResponse;
 
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -94,5 +96,22 @@ public class APIAlodigaWallet {
             @WebParam(name = "originApplicationId") Long originApplicationId) {
         return walletOperations.getSequencesByDocumentTypeByOriginApplication(documentTypeId, originApplicationId);
     }
+    
+    @WebMethod
+    public AccountBankResponse saveAccountBank(
+            @WebParam(name = "unifiedRegistryId") Long unifiedRegistryId,
+            @WebParam(name = "accountNumber") String accountNumber,
+            @WebParam(name = "bankId") Long bankId,
+            @WebParam(name = "accountTypeBankId") Integer accountTypeBankId) {
+        return walletOperations.saveAccountBank(unifiedRegistryId, accountNumber,bankId,accountTypeBankId);
+    }
+    
+    @WebMethod
+    public AccountBankListResponse getAccountBankByUser(
+            @WebParam(name = "unifiedRegistryId") Long unifiedRegistryId) {
+        return walletOperations.getAccountBankByUser(unifiedRegistryId);
+    }
+    
+    
 
 }

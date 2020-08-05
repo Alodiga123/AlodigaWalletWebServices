@@ -1,7 +1,8 @@
 package com.alodiga.wallet.bean;
 
-
-
+import com.alodiga.wallet.common.model.AccountBank;
+import com.alodiga.wallet.common.model.AccountTypeBank;
+import com.alodiga.wallet.common.model.Bank;
 import com.alodiga.wallet.common.model.BankOperation;
 import com.alodiga.wallet.common.model.City;
 import com.alodiga.wallet.common.model.CollectionType;
@@ -12,16 +13,18 @@ import com.alodiga.wallet.common.model.PersonType;
 import com.alodiga.wallet.common.model.Product;
 import com.alodiga.wallet.common.model.Sequences;
 import com.alodiga.wallet.common.model.State;
+import com.alodiga.wallet.common.model.StatusAccountBank;
 import com.alodiga.wallet.common.model.StatusTransactionApproveRequest;
 import com.alodiga.wallet.common.model.Transaction;
 import com.alodiga.wallet.common.model.TransactionApproveRequest;
+import com.alodiga.wallet.respuestas.AccountBankListResponse;
+import com.alodiga.wallet.respuestas.AccountBankResponse;
 import com.alodiga.wallet.respuestas.CityListResponse;
 import com.alodiga.wallet.respuestas.CollectionRequestListResponse;
 import com.alodiga.wallet.respuestas.CollectionTypeListResponse;
 import com.alodiga.wallet.respuestas.CountryListResponse;
 import com.alodiga.wallet.respuestas.DocumentsPersonTypeListResponse;
 import com.alodiga.wallet.respuestas.PersonTypeListResponse;
-
 
 import java.util.ArrayList;
 
@@ -37,7 +40,6 @@ import org.apache.log4j.Logger;
 import com.alodiga.wallet.respuestas.ResponseCode;
 import com.alodiga.wallet.respuestas.StateListResponse;
 import com.alodiga.wallet.respuestas.TransactionApproveRequestResponse;
-
 
 import com.alodiga.wallet.utils.Constants;
 import java.sql.Timestamp;
@@ -174,8 +176,6 @@ public class APIAdminWalletOperations {
         }
 
     }
-    
-   
 
     private String generateNumberSequence(Sequences s) {
         String secuence = "";
@@ -188,7 +188,7 @@ public class APIAdminWalletOperations {
             secuence = ((s.getOriginApplicationId().getId().equals(Constants.ORIGIN_APPLICATION_APP_ALODIGA_WALLET_ID)) ? "APP-" : "ADM-")
                     .concat(s.getDocumentTypeId().getAcronym()).concat("-")
                     .concat(String.valueOf(year)).concat("-")
-                    .concat(numberSequence.toString()).concat("-");
+                    .concat(numberSequence.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -220,14 +220,54 @@ public class APIAdminWalletOperations {
             approveRequest.setCreateDate(new Timestamp(new Date().getTime()));
             entityManager.persist(approveRequest);
             return new TransactionApproveRequestResponse(ResponseCode.EXITO, "", approveRequest);
-        }catch (NoResultException e) {
+        } catch (NoResultException e) {
             e.printStackTrace();
             return new TransactionApproveRequestResponse(ResponseCode.ERROR_INTERNO, "Error");
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new TransactionApproveRequestResponse(ResponseCode.ERROR_INTERNO, "Error");
         }
 
     }
 
+    public AccountBankResponse saveAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId, Integer accountTypeBankId) {
+
+        try {
+            AccountBank accountBank = new AccountBank();
+            accountBank.setUnifiedRegistryId(unifiedRegistryId);
+            accountBank.setAccountNumber(accountNumber);
+            Bank bank = entityManager.find(Bank.class, bankId);
+            accountBank.setBankId(bank);
+            StatusAccountBank statusAccountBank = entityManager.find(StatusAccountBank.class, Constants.STATUS_ACCOUNT_BANK);
+            accountBank.setStatusAccountBankId(statusAccountBank);
+            AccountTypeBank accountTypeBank = entityManager.find(AccountTypeBank.class, accountTypeBankId);
+            accountBank.setAccountTypeBankId(accountTypeBank);
+            accountBank.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(accountBank);
+            return new AccountBankResponse(ResponseCode.EXITO, "", accountBank);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new AccountBankResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
+    
+    public AccountBankListResponse getAccountBankByUser(Long unifiedRegistryId) {
+        List<AccountBank> accountBanks = new ArrayList<AccountBank>();
+
+        try {
+            accountBanks = (List<AccountBank>) entityManager.createNamedQuery("AccountBank.findByUnifiedRegistryId", AccountBank.class).setParameter("unifiedRegistryId", unifiedRegistryId).getResultList();
+            if (accountBanks.size() <= 0) {
+                return new AccountBankListResponse(ResponseCode.ERROR_INTERNO, "Error loading account bank");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new AccountBankListResponse(ResponseCode.ERROR_INTERNO, "Error loading account bank");
+        }
+
+        return new AccountBankListResponse(ResponseCode.EXITO, "", accountBanks);
+    }
+    
+    
+   
 }
