@@ -117,5 +117,13 @@ public class APIAlodigaWallet {
             @WebParam(name = "bankId") Long bankId) {
         return walletOperations.getAccountBankByUserByBank(unifiedRegistryId,bankId);
     }
+    
+    @WebMethod
+    public AccountBankResponse updateAccountBank(
+            @WebParam(name = "unifiedRegistryId") Long unifiedRegistryId,
+            @WebParam(name = "accountNumber") String accountNumber,
+            @WebParam(name = "bankId") Long bankId) {
+        return walletOperations.updateAccountBank(unifiedRegistryId, accountNumber,bankId);
+    }
 
 }

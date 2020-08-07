@@ -233,25 +233,17 @@ public class APIAdminWalletOperations {
     public AccountBankResponse saveAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId, Integer accountTypeBankId) {
 
         try {
-            AccountBank accountBank = getAccountBankByUserByBank(unifiedRegistryId, bankId);
-
-            if (accountBank == null) {
-                accountBank.setUnifiedRegistryId(unifiedRegistryId);
-                accountBank.setAccountNumber(accountNumber);
-                Bank bank = entityManager.find(Bank.class, bankId);
-                accountBank.setBankId(bank);
-                StatusAccountBank statusAccountBank = entityManager.find(StatusAccountBank.class, Constants.STATUS_ACCOUNT_BANK);
-                accountBank.setStatusAccountBankId(statusAccountBank);
-                AccountTypeBank accountTypeBank = entityManager.find(AccountTypeBank.class, accountTypeBankId);
-                accountBank.setAccountTypeBankId(accountTypeBank);
-                accountBank.setCreateDate(new Timestamp(new Date().getTime()));
-                entityManager.persist(accountBank);
-            } else {
-                accountBank.setAccountNumber(accountNumber);
-                accountBank.setUpdateDate(new Timestamp(new Date().getTime()));
-                entityManager.merge(accountBank);
-            }
-
+            AccountBank accountBank = new AccountBank();
+            accountBank.setUnifiedRegistryId(unifiedRegistryId);
+            accountBank.setAccountNumber(accountNumber);
+            Bank bank = entityManager.find(Bank.class, bankId);
+            accountBank.setBankId(bank);
+            StatusAccountBank statusAccountBank = entityManager.find(StatusAccountBank.class, Constants.STATUS_ACCOUNT_BANK);
+            accountBank.setStatusAccountBankId(statusAccountBank);
+            AccountTypeBank accountTypeBank = entityManager.find(AccountTypeBank.class, accountTypeBankId);
+            accountBank.setAccountTypeBankId(accountTypeBank);
+            accountBank.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(accountBank);
             return new AccountBankResponse(ResponseCode.EXITO, "", accountBank);
         } catch (Exception e) {
             e.printStackTrace();
@@ -275,9 +267,9 @@ public class APIAdminWalletOperations {
 
         return new AccountBankListResponse(ResponseCode.EXITO, "", accountBanks);
     }
-    
+
     public AccountBank getAccountBankByUserByBank(Long unifiedRegistryId, Long bankId) {
-        
+
         try {
             AccountBank accountBanks = (AccountBank) entityManager.createNamedQuery("AccountBank.findByUnifiedRegistryIdByAccountNumberByBankIdByStatusAccountId", AccountBank.class).setParameter("unifiedRegistryId", unifiedRegistryId).setParameter("bankId", bankId).getSingleResult();
             return accountBanks;
@@ -287,6 +279,21 @@ public class APIAdminWalletOperations {
         }
 
     }
-    
-   
+
+    public AccountBankResponse updateAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId) {
+
+        try {
+            AccountBank accountBanks = getAccountBankByUserByBank(unifiedRegistryId, bankId);
+            accountBanks.setAccountNumber(accountNumber);
+            accountBanks.setUpdateDate(new Timestamp(new Date().getTime()));
+            entityManager.merge(accountBanks);
+            return new AccountBankResponse(ResponseCode.EXITO, "", accountBanks);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new AccountBankResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
+
+  
 }
