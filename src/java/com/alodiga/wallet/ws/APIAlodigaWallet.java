@@ -1,6 +1,7 @@
 package com.alodiga.wallet.ws;
 
 import com.alodiga.wallet.bean.APIAdminWalletOperations;
+import com.alodiga.wallet.common.model.AccountBank;
 import com.alodiga.wallet.common.model.Sequences;
 import com.alodiga.wallet.respuestas.AccountBankListResponse;
 import com.alodiga.wallet.respuestas.AccountBankResponse;
@@ -110,6 +111,11 @@ public class APIAlodigaWallet {
         return walletOperations.getAccountBankByUser(unifiedRegistryId);
     }
     
-    
+    @WebMethod
+    public AccountBank getAccountBankByUserByBank(
+            @WebParam(name = "unifiedRegistryId") Long unifiedRegistryId,
+            @WebParam(name = "bankId") Long bankId) {
+        return walletOperations.getAccountBankByUserByBank(unifiedRegistryId,bankId);
+    }
 
 }
