@@ -9,7 +9,12 @@ import com.alodiga.wallet.common.model.CollectionType;
 import com.alodiga.wallet.common.model.CollectionsRequest;
 import com.alodiga.wallet.common.model.Country;
 import com.alodiga.wallet.common.model.DocumentsPersonType;
+import com.alodiga.wallet.common.model.LegalPerson;
+import com.alodiga.wallet.common.model.NaturalPerson;
+import com.alodiga.wallet.common.model.Person;
+import com.alodiga.wallet.common.model.PersonClassification;
 import com.alodiga.wallet.common.model.PersonType;
+import com.alodiga.wallet.common.model.PhonePerson;
 import com.alodiga.wallet.common.model.Product;
 import com.alodiga.wallet.common.model.Sequences;
 import com.alodiga.wallet.common.model.State;
@@ -24,6 +29,8 @@ import com.alodiga.wallet.respuestas.CollectionRequestListResponse;
 import com.alodiga.wallet.respuestas.CollectionTypeListResponse;
 import com.alodiga.wallet.respuestas.CountryListResponse;
 import com.alodiga.wallet.respuestas.DocumentsPersonTypeListResponse;
+import com.alodiga.wallet.respuestas.LegalPersonResponse;
+import com.alodiga.wallet.respuestas.NaturalPersonResponse;
 import com.alodiga.wallet.respuestas.PersonTypeListResponse;
 
 import java.util.ArrayList;
@@ -268,23 +275,13 @@ public class APIAdminWalletOperations {
         return new AccountBankListResponse(ResponseCode.EXITO, "", accountBanks);
     }
 
-    public AccountBank getAccountBankByUserByBank(Long unifiedRegistryId, Long bankId) {
+
+
+    public AccountBankResponse updateAccountBankByAccountNumber(Long unifiedRegistryId, String accountNumberOld,String accountNumberCurrent, Long bankId) {
 
         try {
-            AccountBank accountBanks = (AccountBank) entityManager.createNamedQuery("AccountBank.findByUnifiedRegistryIdByAccountNumberByBankIdByStatusAccountId", AccountBank.class).setParameter("unifiedRegistryId", unifiedRegistryId).setParameter("bankId", bankId).getSingleResult();
-            return accountBanks;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-    }
-
-    public AccountBankResponse updateAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId) {
-
-        try {
-            AccountBank accountBanks = getAccountBankByUserByBank(unifiedRegistryId, bankId);
-            accountBanks.setAccountNumber(accountNumber);
+            AccountBank accountBanks = (AccountBank) entityManager.createNamedQuery("AccountBank.findByUnifiedRegistryIdByAccountNumberByBankIdByStatusAccountId", AccountBank.class).setParameter("unifiedRegistryId", unifiedRegistryId).setParameter("accountNumber", accountNumberOld).setParameter("bankId", bankId).getSingleResult();
+            accountBanks.setAccountNumber(accountNumberCurrent);
             accountBanks.setUpdateDate(new Timestamp(new Date().getTime()));
             entityManager.merge(accountBanks);
             return new AccountBankResponse(ResponseCode.EXITO, "", accountBanks);
@@ -295,5 +292,138 @@ public class APIAdminWalletOperations {
 
     }
 
-  
+    public NaturalPersonResponse saveBusinessApplicantNaturalPerson(Person person, NaturalPerson naturalPerson, PhonePerson phonePerson) {
+
+        try {
+            //Guardo person
+            person.setCreateDate(new Timestamp(new Date().getTime()));
+            if (person.getEmail() != null) {
+                person.setEmail(person.getEmail());
+            } else {
+                person.setEmail(null);
+            }
+            person.setPersonTypeId(person.getPersonTypeId());
+            //person.setPersonClassificationId(person.getPersonClassificationId());
+            PersonClassification personClassification = entityManager.find(PersonClassification.class, Constants.NATURAL_PERSON);
+            person.setPersonClassificationId(personClassification);
+            if (person.getWebSite() != null) {
+                person.setWebSite(person.getWebSite());
+            } else {
+                person.setWebSite(null);
+            }
+            person.setCountryId(person.getCountryId());
+            entityManager.persist(person);
+            //Guardo Natural Person
+            naturalPerson.setPersonId(person);
+            naturalPerson.setDocumentsPersonTypeId(naturalPerson.getDocumentsPersonTypeId());
+            naturalPerson.setIdentificationNumber(naturalPerson.getIdentificationNumber());
+            if (naturalPerson.getIdentificactionNumberOld() != null) {
+                naturalPerson.setIdentificactionNumberOld(naturalPerson.getIdentificactionNumberOld());
+            } else {
+                naturalPerson.setIdentificactionNumberOld(null);
+            }
+            naturalPerson.setDueDateDocumentIdentification(naturalPerson.getDueDateDocumentIdentification());
+            naturalPerson.setFirstName(naturalPerson.getFirstName());
+            naturalPerson.setLastName(naturalPerson.getLastName());
+            if (naturalPerson.getMarriedLastName() != null) {
+                naturalPerson.setMarriedLastName(naturalPerson.getMarriedLastName());
+            } else {
+                naturalPerson.setMarriedLastName(null);
+            }
+            naturalPerson.setGender(naturalPerson.getGender());
+            naturalPerson.setPlaceBirth(naturalPerson.getPlaceBirth());
+            naturalPerson.setDateBirth(naturalPerson.getDateBirth());
+            naturalPerson.setCivilStatusId(naturalPerson.getCivilStatusId());
+            if (naturalPerson.getProfessionId() != null) {
+                naturalPerson.setProfessionId(naturalPerson.getProfessionId());
+            } else {
+                naturalPerson.setProfessionId(null);
+            }
+            naturalPerson.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(naturalPerson);
+            //Guardo Phone Number
+            phonePerson.setCountryId(phonePerson.getCountryId());
+            phonePerson.setCountryCode(phonePerson.getCountryCode());
+            phonePerson.setAreaCode(phonePerson.getAreaCode());
+            phonePerson.setNumberPhone(phonePerson.getNumberPhone());
+            phonePerson.setPersonId(person);
+            phonePerson.setPhoneTypeId(phonePerson.getPhoneTypeId());
+            if (phonePerson.getExtensionPhoneNumber() != null) {
+                phonePerson.setExtensionPhoneNumber(phonePerson.getExtensionPhoneNumber());
+            } else {
+                phonePerson.setExtensionPhoneNumber(null);
+            }
+            phonePerson.setIndMainPhone(phonePerson.getIndMainPhone());
+            phonePerson.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(phonePerson);
+            return new NaturalPersonResponse(ResponseCode.EXITO, "", naturalPerson);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new NaturalPersonResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
+
+    public LegalPersonResponse saveBusinessApplicantLegalPerson(Person person,LegalPerson legalPerson, PhonePerson phonePerson) {
+
+        try {
+            //Guardo person
+            person.setCreateDate(new Timestamp(new Date().getTime()));
+            if (person.getEmail() != null) {
+                person.setEmail(person.getEmail());
+            } else {
+                person.setEmail(null);
+            }
+            person.setPersonTypeId(person.getPersonTypeId());
+            //person.setPersonClassificationId(person.getPersonClassificationId());
+            PersonClassification personClassification = entityManager.find(PersonClassification.class, Constants.LEGAL_PERSON);
+            person.setPersonClassificationId(personClassification);
+            if (person.getWebSite() != null) {
+                person.setWebSite(person.getWebSite());
+            } else {
+                person.setWebSite(null);
+            }
+            person.setCountryId(person.getCountryId());
+            entityManager.persist(person);
+            //Guardo Legal Person
+            legalPerson.setCreateDate(new Timestamp(new Date().getTime()));
+            legalPerson.setPersonId(person);
+            legalPerson.setDocumentsPersonTypeId(legalPerson.getDocumentsPersonTypeId());
+            legalPerson.setIdentificationNumber(legalPerson.getIdentificationNumber());
+            if (legalPerson.getTradeName() != null) {
+                legalPerson.setTradeName(legalPerson.getTradeName());
+            } else {
+                legalPerson.setTradeName(null);
+            }            
+            legalPerson.setBusinessName(legalPerson.getBusinessName());
+            legalPerson.setBusinessCategoryId(legalPerson.getBusinessCategoryId());
+            legalPerson.setRegisterNumber(legalPerson.getRegisterNumber());
+            legalPerson.setDateInscriptionRegister(legalPerson.getDateInscriptionRegister());
+            legalPerson.setPayedCapital(legalPerson.getPayedCapital());           
+            entityManager.persist(legalPerson);
+            //Guardo Phone Number
+            phonePerson.setCountryId(phonePerson.getCountryId());
+            phonePerson.setCountryCode(phonePerson.getCountryCode());
+            phonePerson.setAreaCode(phonePerson.getAreaCode());
+            phonePerson.setNumberPhone(phonePerson.getNumberPhone());
+            phonePerson.setPersonId(person);
+            phonePerson.setPhoneTypeId(phonePerson.getPhoneTypeId());
+            if (phonePerson.getExtensionPhoneNumber() != null) {
+                phonePerson.setExtensionPhoneNumber(phonePerson.getExtensionPhoneNumber());
+            } else {
+                phonePerson.setExtensionPhoneNumber(null);
+            }
+            phonePerson.setIndMainPhone(phonePerson.getIndMainPhone());
+            phonePerson.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(phonePerson);
+            return new LegalPersonResponse(ResponseCode.EXITO, "", legalPerson);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LegalPersonResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
+    
+   
+    
 }

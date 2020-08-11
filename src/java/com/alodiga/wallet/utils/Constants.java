@@ -235,4 +235,7 @@ public class Constants {
     public static final int STATUS_TRANSACTION_APPROVED_REQUEST = 1;
     public static final int STATUS_ACCOUNT_BANK = 1;
     
+    public static final int NATURAL_PERSON = 1;
+    public static final int LEGAL_PERSON = 2;
+    
 }
