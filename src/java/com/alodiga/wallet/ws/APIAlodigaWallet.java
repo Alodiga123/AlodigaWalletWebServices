@@ -1,6 +1,12 @@
 package com.alodiga.wallet.ws;
 
 import com.alodiga.wallet.bean.APIAdminWalletOperations;
+import com.alodiga.wallet.common.model.AccountBank;
+import com.alodiga.wallet.common.model.LegalPerson;
+import com.alodiga.wallet.common.model.NaturalPerson;
+import com.alodiga.wallet.common.model.Person;
+import com.alodiga.wallet.common.model.PersonClassification;
+import com.alodiga.wallet.common.model.PhonePerson;
 import com.alodiga.wallet.common.model.Sequences;
 import com.alodiga.wallet.respuestas.AccountBankListResponse;
 import com.alodiga.wallet.respuestas.AccountBankResponse;
@@ -18,6 +24,8 @@ import com.alodiga.wallet.respuestas.CollectionTypeListResponse;
 import com.alodiga.wallet.respuestas.CountryListResponse;
 
 import com.alodiga.wallet.respuestas.DocumentsPersonTypeListResponse;
+import com.alodiga.wallet.respuestas.LegalPersonResponse;
+import com.alodiga.wallet.respuestas.NaturalPersonResponse;
 
 import com.alodiga.wallet.respuestas.PersonTypeListResponse;
 
@@ -110,6 +118,32 @@ public class APIAlodigaWallet {
         return walletOperations.getAccountBankByUser(unifiedRegistryId);
     }
     
+
+    @WebMethod
+    public AccountBankResponse updateAccountBankByAccountNumber(
+            @WebParam(name = "unifiedRegistryId") Long unifiedRegistryId,
+            @WebParam(name = "accountNumberOld") String accountNumberOld,
+            @WebParam(name = "accountNumberCurrent") String accountNumberCurrent,
+            @WebParam(name = "bankId") Long bankId) {
+        return walletOperations.updateAccountBankByAccountNumber(unifiedRegistryId, accountNumberOld,accountNumberCurrent,bankId);
+    }
     
+   
+    
+    @WebMethod
+    public NaturalPersonResponse saveBusinessApplicantNaturalPerson(
+            @WebParam(name = "person") Person person,
+            @WebParam(name = "naturalPerson") NaturalPerson naturalPerson,
+            @WebParam(name = "phonePerson") PhonePerson phonePerson) {
+        return walletOperations.saveBusinessApplicantNaturalPerson(person, naturalPerson,phonePerson);
+    }
+    
+    @WebMethod
+    public LegalPersonResponse saveBusinessApplicantLegalPerson(
+            @WebParam(name = "person") Person person,
+            @WebParam(name = "legalPerson") LegalPerson legalPerson,
+            @WebParam(name = "phonePerson") PhonePerson phonePerson) {
+        return walletOperations.saveBusinessApplicantLegalPerson(person, legalPerson,phonePerson);
+    }
 
 }
