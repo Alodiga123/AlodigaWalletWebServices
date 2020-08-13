@@ -1,12 +1,9 @@
 package com.alodiga.wallet.bean;
 
-<<<<<<< HEAD
 import com.alodiga.wallet.common.genericEJB.EJBRequest;
-=======
 import com.alodiga.wallet.common.enumeraciones.PersonClassificationE;
 import com.alodiga.wallet.common.enumeraciones.StatusAccountBankE;
 import com.alodiga.wallet.common.enumeraciones.StatusTransactionApproveRequestE;
->>>>>>> refs/heads/master
 import com.alodiga.wallet.common.model.AccountBank;
 import com.alodiga.wallet.common.model.AccountTypeBank;
 import com.alodiga.wallet.common.model.Address;
@@ -32,10 +29,7 @@ import com.alodiga.wallet.common.model.StatusTransactionApproveRequest;
 import com.alodiga.wallet.common.model.Transaction;
 import com.alodiga.wallet.common.model.TransactionApproveRequest;
 import com.alodiga.wallet.common.utils.QueryConstants;
-<<<<<<< HEAD
 import com.alodiga.wallet.common.enumeraciones.PersonClassificationE;
-=======
->>>>>>> refs/heads/master
 import com.alodiga.wallet.respuestas.AccountBankListResponse;
 import com.alodiga.wallet.respuestas.AccountBankResponse;
 import com.alodiga.wallet.respuestas.CityListResponse;
