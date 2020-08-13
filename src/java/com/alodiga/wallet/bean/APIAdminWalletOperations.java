@@ -1,5 +1,8 @@
 package com.alodiga.wallet.bean;
 
+import com.alodiga.wallet.common.enumeraciones.PersonClassificationE;
+import com.alodiga.wallet.common.enumeraciones.StatusAccountBankE;
+import com.alodiga.wallet.common.enumeraciones.StatusTransactionApproveRequestE;
 import com.alodiga.wallet.common.model.AccountBank;
 import com.alodiga.wallet.common.model.AccountTypeBank;
 import com.alodiga.wallet.common.model.Address;
@@ -14,6 +17,7 @@ import com.alodiga.wallet.common.model.LegalPerson;
 import com.alodiga.wallet.common.model.NaturalPerson;
 import com.alodiga.wallet.common.model.Person;
 import com.alodiga.wallet.common.model.PersonClassification;
+import com.alodiga.wallet.common.model.PersonHasAddress;
 import com.alodiga.wallet.common.model.PersonType;
 import com.alodiga.wallet.common.model.PhonePerson;
 import com.alodiga.wallet.common.model.Product;
@@ -23,6 +27,7 @@ import com.alodiga.wallet.common.model.StatusAccountBank;
 import com.alodiga.wallet.common.model.StatusTransactionApproveRequest;
 import com.alodiga.wallet.common.model.Transaction;
 import com.alodiga.wallet.common.model.TransactionApproveRequest;
+import com.alodiga.wallet.common.utils.QueryConstants;
 import com.alodiga.wallet.respuestas.AccountBankListResponse;
 import com.alodiga.wallet.respuestas.AccountBankResponse;
 import com.alodiga.wallet.respuestas.CityListResponse;
@@ -32,6 +37,7 @@ import com.alodiga.wallet.respuestas.CountryListResponse;
 import com.alodiga.wallet.respuestas.DocumentsPersonTypeListResponse;
 import com.alodiga.wallet.respuestas.LegalPersonResponse;
 import com.alodiga.wallet.respuestas.NaturalPersonResponse;
+import com.alodiga.wallet.respuestas.PersonHasAddressResponse;
 import com.alodiga.wallet.respuestas.PersonTypeListResponse;
 
 import java.util.ArrayList;
@@ -206,7 +212,7 @@ public class APIAdminWalletOperations {
     public TransactionApproveRequestResponse saveTransactionApproveRequest(Long unifiedRegistryUserId, Long productId, Long transactionId, Long bankOperationId, Long documentTypeId, Long originApplicationId) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         Date curDate = new Date();
-
+        String statusTransactionApproveCode = StatusTransactionApproveRequestE.APPR.getStatusTransactionApproveRequestCode();
         try {
             TransactionApproveRequest approveRequest = new TransactionApproveRequest();
             approveRequest.setUnifiedRegistryUserId(unifiedRegistryUserId);
@@ -223,8 +229,7 @@ public class APIAdminWalletOperations {
             Date fechaDate = null;
             fechaDate = format.parse(DateToStr);
             approveRequest.setRequestDate(fechaDate);
-            StatusTransactionApproveRequest statusTransactionApproveRequest = entityManager.find(StatusTransactionApproveRequest.class, Constants.STATUS_TRANSACTION_APPROVED_REQUEST);
-            approveRequest.setStatusTransactionApproveRequestId(statusTransactionApproveRequest);
+            StatusTransactionApproveRequest statusTransactionApproveRequest = (StatusTransactionApproveRequest) entityManager.createNamedQuery(QueryConstants.CODE_BY_STATUS, StatusTransactionApproveRequest.class).setParameter("code", statusTransactionApproveCode).getSingleResult();
             approveRequest.setCreateDate(new Timestamp(new Date().getTime()));
             entityManager.persist(approveRequest);
             return new TransactionApproveRequestResponse(ResponseCode.EXITO, "", approveRequest);
@@ -240,13 +245,14 @@ public class APIAdminWalletOperations {
 
     public AccountBankResponse saveAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId, Integer accountTypeBankId) {
 
+        String statusAccountBankCode = StatusAccountBankE.ACTI.getStatusAccountCode();
         try {
             AccountBank accountBank = new AccountBank();
             accountBank.setUnifiedRegistryId(unifiedRegistryId);
             accountBank.setAccountNumber(accountNumber);
             Bank bank = entityManager.find(Bank.class, bankId);
             accountBank.setBankId(bank);
-            StatusAccountBank statusAccountBank = entityManager.find(StatusAccountBank.class, Constants.STATUS_ACCOUNT_BANK);
+            StatusAccountBank statusAccountBank = (StatusAccountBank) entityManager.createNamedQuery(QueryConstants.STATUS_ACCOUNT_BANK_BY_CODE, StatusAccountBank.class).setParameter("code",statusAccountBankCode).getSingleResult();
             accountBank.setStatusAccountBankId(statusAccountBank);
             AccountTypeBank accountTypeBank = entityManager.find(AccountTypeBank.class, accountTypeBankId);
             accountBank.setAccountTypeBankId(accountTypeBank);
@@ -276,9 +282,7 @@ public class APIAdminWalletOperations {
         return new AccountBankListResponse(ResponseCode.EXITO, "", accountBanks);
     }
 
-
-
-    public AccountBankResponse updateAccountBankByAccountNumber(Long unifiedRegistryId, String accountNumberOld,String accountNumberCurrent, Long bankId) {
+    public AccountBankResponse updateAccountBankByAccountNumber(Long unifiedRegistryId, String accountNumberOld, String accountNumberCurrent, Long bankId) {
 
         try {
             AccountBank accountBanks = (AccountBank) entityManager.createNamedQuery("AccountBank.findByUnifiedRegistryIdByAccountNumberByBankIdByStatusAccountId", AccountBank.class).setParameter("unifiedRegistryId", unifiedRegistryId).setParameter("accountNumber", accountNumberOld).setParameter("bankId", bankId).getSingleResult();
@@ -295,6 +299,8 @@ public class APIAdminWalletOperations {
 
     public NaturalPersonResponse saveBusinessApplicantNaturalPerson(Person person, NaturalPerson naturalPerson, PhonePerson phonePerson) {
 
+        String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
+
         try {
             //Guardo person
             person.setCreateDate(new Timestamp(new Date().getTime()));
@@ -305,7 +311,7 @@ public class APIAdminWalletOperations {
             }
             person.setPersonTypeId(person.getPersonTypeId());
             //person.setPersonClassificationId(person.getPersonClassificationId());
-            PersonClassification personClassification = entityManager.find(PersonClassification.class, Constants.NATURAL_PERSON);
+            PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter("code", personClassificationCode).getSingleResult();
             person.setPersonClassificationId(personClassification);
             if (person.getWebSite() != null) {
                 person.setWebSite(person.getWebSite());
@@ -365,8 +371,9 @@ public class APIAdminWalletOperations {
 
     }
 
-    public LegalPersonResponse saveBusinessApplicantLegalPerson(Person person,LegalPerson legalPerson, PhonePerson phonePerson) {
+    public LegalPersonResponse saveBusinessApplicantLegalPerson(Person person, LegalPerson legalPerson, PhonePerson phonePerson) {
 
+        String personClassificationCode = PersonClassificationE.LEBUAP.getPersonClassificationCode();
         try {
             //Guardo person
             person.setCreateDate(new Timestamp(new Date().getTime()));
@@ -377,7 +384,7 @@ public class APIAdminWalletOperations {
             }
             person.setPersonTypeId(person.getPersonTypeId());
             //person.setPersonClassificationId(person.getPersonClassificationId());
-            PersonClassification personClassification = entityManager.find(PersonClassification.class, Constants.LEGAL_PERSON);
+            PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter("code", personClassificationCode).getSingleResult();
             person.setPersonClassificationId(personClassification);
             if (person.getWebSite() != null) {
                 person.setWebSite(person.getWebSite());
@@ -395,12 +402,12 @@ public class APIAdminWalletOperations {
                 legalPerson.setTradeName(legalPerson.getTradeName());
             } else {
                 legalPerson.setTradeName(null);
-            }            
+            }
             legalPerson.setBusinessName(legalPerson.getBusinessName());
             legalPerson.setBusinessCategoryId(legalPerson.getBusinessCategoryId());
             legalPerson.setRegisterNumber(legalPerson.getRegisterNumber());
             legalPerson.setDateInscriptionRegister(legalPerson.getDateInscriptionRegister());
-            legalPerson.setPayedCapital(legalPerson.getPayedCapital());           
+            legalPerson.setPayedCapital(legalPerson.getPayedCapital());
             entityManager.persist(legalPerson);
             //Guardo Phone Number
             phonePerson.setCountryId(phonePerson.getCountryId());
@@ -424,38 +431,71 @@ public class APIAdminWalletOperations {
         }
 
     }
-    
-//   public LegalPersonResponse saveAddressBusinessApplicant(Person person,Address address) {
-//
-//        try {
-//            //Guardo person
-//            
-//            
-//            entityManager.persist(person);
-//            //Guardo Legal Person
-//                      
-//            entityManager.persist(legalPerson);
-//            //Guardo Phone Number
-//            phonePerson.setCountryId(phonePerson.getCountryId());
-//            phonePerson.setCountryCode(phonePerson.getCountryCode());
-//            phonePerson.setAreaCode(phonePerson.getAreaCode());
-//            phonePerson.setNumberPhone(phonePerson.getNumberPhone());
-//            phonePerson.setPersonId(person);
-//            phonePerson.setPhoneTypeId(phonePerson.getPhoneTypeId());
-//            if (phonePerson.getExtensionPhoneNumber() != null) {
-//                phonePerson.setExtensionPhoneNumber(phonePerson.getExtensionPhoneNumber());
-//            } else {
-//                phonePerson.setExtensionPhoneNumber(null);
-//            }
-//            phonePerson.setIndMainPhone(phonePerson.getIndMainPhone());
-//            phonePerson.setCreateDate(new Timestamp(new Date().getTime()));
-//            entityManager.persist(phonePerson);
-//            return new LegalPersonResponse(ResponseCode.EXITO, "", legalPerson);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new LegalPersonResponse(ResponseCode.ERROR_INTERNO, "Error");
-//        }
-//
-//    }
-    
+
+    public PersonHasAddressResponse saveAddressBusinessApplicant(Person person, Address address) {
+
+        try {
+            //Guardo Address
+            address.setCountryId(address.getCountryId());
+            address.setCityId(address.getCityId());
+            if (address.getCountyId() != null) {
+                address.setCountyId(address.getCountyId());
+            } else {
+                address.setCountyId(null);
+            }
+            if (address.getZipCode() != null) {
+                address.setZipCode(address.getZipCode());
+            } else {
+                address.setZipCode(null);
+            }
+            if (address.getStreetTypeId() != null) {
+                address.setStreetTypeId(address.getStreetTypeId());
+            } else {
+                address.setStreetTypeId(null);
+            }
+            if (address.getNameStreet() != null) {
+                address.setNameStreet(address.getNameStreet());
+            } else {
+                address.setNameStreet(null);
+            }
+            address.setEdificationTypeId(address.getEdificationTypeId());
+            if (address.getNameEdification() != null) {
+                address.setNameEdification(address.getNameEdification());
+            } else {
+                address.setNameEdification(null);
+            }
+            if (address.getTower() != null) {
+                address.setTower(address.getTower());
+            } else {
+                address.setTower(null);
+            }
+            if (address.getFloor() != null) {
+                address.setFloor(address.getFloor());
+            } else {
+                address.setFloor(null);
+            }
+            if (address.getUrbanization() != null) {
+                address.setUrbanization(address.getUrbanization());
+            } else {
+                address.setUrbanization(null);
+            }
+            address.setAddressLine1("calle:" + address.getNameStreet() + "," + "Urbanizacion: " + address.getUrbanization() + "," + "Edificio:" + address.getNameEdification() + "," + "Piso:" + address.getFloor() + "");
+            address.setAddressLine2("Pais:" + address.getCountryId().getName() + "," + "Ciudad:" + address.getCountyId().getName() + "," + "Codigo Postal:" + address.getZipCode() + "");
+            address.setAddressTypeId(address.getAddressTypeId());
+            address.setIndMainAddress(address.getIndMainAddress());
+            entityManager.persist(address);
+            //Guardo Person_has_addres
+            PersonHasAddress personHasAddress = new PersonHasAddress();
+            personHasAddress.setAddressId(address);
+            person = entityManager.find(Person.class, person.getId());
+            personHasAddress.setPersonId(person);
+            personHasAddress.setCreateDate(new Timestamp(new Date().getTime()));
+            entityManager.persist(personHasAddress);
+            return new PersonHasAddressResponse(ResponseCode.EXITO, "", personHasAddress);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PersonHasAddressResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
 }
