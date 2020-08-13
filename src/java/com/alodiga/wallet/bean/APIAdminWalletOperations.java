@@ -2,6 +2,7 @@ package com.alodiga.wallet.bean;
 
 import com.alodiga.wallet.common.model.AccountBank;
 import com.alodiga.wallet.common.model.AccountTypeBank;
+import com.alodiga.wallet.common.model.Address;
 import com.alodiga.wallet.common.model.Bank;
 import com.alodiga.wallet.common.model.BankOperation;
 import com.alodiga.wallet.common.model.City;
@@ -424,6 +425,37 @@ public class APIAdminWalletOperations {
 
     }
     
-   
+//   public LegalPersonResponse saveAddressBusinessApplicant(Person person,Address address) {
+//
+//        try {
+//            //Guardo person
+//            
+//            
+//            entityManager.persist(person);
+//            //Guardo Legal Person
+//                      
+//            entityManager.persist(legalPerson);
+//            //Guardo Phone Number
+//            phonePerson.setCountryId(phonePerson.getCountryId());
+//            phonePerson.setCountryCode(phonePerson.getCountryCode());
+//            phonePerson.setAreaCode(phonePerson.getAreaCode());
+//            phonePerson.setNumberPhone(phonePerson.getNumberPhone());
+//            phonePerson.setPersonId(person);
+//            phonePerson.setPhoneTypeId(phonePerson.getPhoneTypeId());
+//            if (phonePerson.getExtensionPhoneNumber() != null) {
+//                phonePerson.setExtensionPhoneNumber(phonePerson.getExtensionPhoneNumber());
+//            } else {
+//                phonePerson.setExtensionPhoneNumber(null);
+//            }
+//            phonePerson.setIndMainPhone(phonePerson.getIndMainPhone());
+//            phonePerson.setCreateDate(new Timestamp(new Date().getTime()));
+//            entityManager.persist(phonePerson);
+//            return new LegalPersonResponse(ResponseCode.EXITO, "", legalPerson);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new LegalPersonResponse(ResponseCode.ERROR_INTERNO, "Error");
+//        }
+//
+//    }
     
 }
