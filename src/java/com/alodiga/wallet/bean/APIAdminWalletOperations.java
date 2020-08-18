@@ -22,6 +22,7 @@ import com.alodiga.wallet.common.model.PersonHasAddress;
 import com.alodiga.wallet.common.model.PersonType;
 import com.alodiga.wallet.common.model.PhonePerson;
 import com.alodiga.wallet.common.model.Product;
+import com.alodiga.wallet.common.model.RequestHasCollectionRequest;
 import com.alodiga.wallet.common.model.Sequences;
 import com.alodiga.wallet.common.model.State;
 import com.alodiga.wallet.common.model.StatusAccountBank;
@@ -41,6 +42,7 @@ import com.alodiga.wallet.respuestas.LegalPersonResponse;
 import com.alodiga.wallet.respuestas.NaturalPersonResponse;
 import com.alodiga.wallet.respuestas.PersonHasAddressResponse;
 import com.alodiga.wallet.respuestas.PersonTypeListResponse;
+import com.alodiga.wallet.respuestas.RequestHasCollectionsRequestResponse;
 
 import java.util.ArrayList;
 
@@ -217,7 +219,7 @@ public class APIAdminWalletOperations {
     public TransactionApproveRequestResponse saveTransactionApproveRequest(Long unifiedRegistryUserId, Long productId, Long transactionId, Long bankOperationId, Long documentTypeId, Long originApplicationId) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         Date curDate = new Date();
-        String statusTransactionApproveCode = StatusTransactionApproveRequestE.APPR.getStatusTransactionApproveRequestCode();
+        String statusTransactionApproveCode = StatusTransactionApproveRequestE.APROBA.getStatusTransactionApproveRequestCode();
         try {
             TransactionApproveRequest approveRequest = new TransactionApproveRequest();
             approveRequest.setUnifiedRegistryUserId(unifiedRegistryUserId);
@@ -250,14 +252,14 @@ public class APIAdminWalletOperations {
 
     public AccountBankResponse saveAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId, Integer accountTypeBankId) {
 
-        String statusAccountBankCode = StatusAccountBankE.ACTI.getStatusAccountCode();
+        String statusAccountBankCode = StatusAccountBankE.ACTIVA.getStatusAccountCode();
         try {
             AccountBank accountBank = new AccountBank();
             accountBank.setUnifiedRegistryId(unifiedRegistryId);
             accountBank.setAccountNumber(accountNumber);
             Bank bank = entityManager.find(Bank.class, bankId);
             accountBank.setBankId(bank);
-            StatusAccountBank statusAccountBank = (StatusAccountBank) entityManager.createNamedQuery(QueryConstants.STATUS_ACCOUNT_BANK_BY_CODE, StatusAccountBank.class).setParameter("code",statusAccountBankCode).getSingleResult();
+            StatusAccountBank statusAccountBank = (StatusAccountBank) entityManager.createNamedQuery(QueryConstants.STATUS_ACCOUNT_BANK_BY_CODE, StatusAccountBank.class).setParameter("code", statusAccountBankCode).getSingleResult();
             accountBank.setStatusAccountBankId(statusAccountBank);
             AccountTypeBank accountTypeBank = entityManager.find(AccountTypeBank.class, accountTypeBankId);
             accountBank.setAccountTypeBankId(accountTypeBank);
@@ -512,4 +514,31 @@ public class APIAdminWalletOperations {
         }
 
     }
+
+    public RequestHasCollectionsRequestResponse saveCollectionsBusinessApplicant(RequestHasCollectionRequest requestHasCollectionRequest) {
+
+        try {
+            requestHasCollectionRequest.setCreateDate(new Timestamp(new Date().getTime()));
+            requestHasCollectionRequest.setCollectionsRequestId(requestHasCollectionRequest.getCollectionsRequestId());
+            requestHasCollectionRequest.setBusinessAffiliationRequestId(requestHasCollectionRequest.getBusinessAffiliationRequestId());
+            requestHasCollectionRequest.setImageFileUrl(requestHasCollectionRequest.getImageFileUrl());
+            if (requestHasCollectionRequest.getObservations() != null) {
+                requestHasCollectionRequest.setObservations(requestHasCollectionRequest.getObservations());
+            } else {
+                requestHasCollectionRequest.setObservations(null);
+            }
+            if (requestHasCollectionRequest.getIndApproved() != null) {
+                requestHasCollectionRequest.setIndApproved(requestHasCollectionRequest.getIndApproved());
+            } else {
+                requestHasCollectionRequest.setIndApproved(null);
+            }
+            entityManager.persist(requestHasCollectionRequest);
+            return new RequestHasCollectionsRequestResponse(ResponseCode.EXITO, "", requestHasCollectionRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RequestHasCollectionsRequestResponse(ResponseCode.ERROR_INTERNO, "Error");
+        }
+
+    }
+
 }
