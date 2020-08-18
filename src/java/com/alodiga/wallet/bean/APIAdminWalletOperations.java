@@ -1,5 +1,6 @@
 package com.alodiga.wallet.bean;
 
+import com.alodiga.wallet.common.genericEJB.EJBRequest;
 import com.alodiga.wallet.common.enumeraciones.PersonClassificationE;
 import com.alodiga.wallet.common.enumeraciones.StatusAccountBankE;
 import com.alodiga.wallet.common.enumeraciones.StatusTransactionApproveRequestE;
@@ -29,6 +30,7 @@ import com.alodiga.wallet.common.model.StatusTransactionApproveRequest;
 import com.alodiga.wallet.common.model.Transaction;
 import com.alodiga.wallet.common.model.TransactionApproveRequest;
 import com.alodiga.wallet.common.utils.QueryConstants;
+import com.alodiga.wallet.common.enumeraciones.PersonClassificationE;
 import com.alodiga.wallet.respuestas.AccountBankListResponse;
 import com.alodiga.wallet.respuestas.AccountBankResponse;
 import com.alodiga.wallet.respuestas.CityListResponse;
@@ -57,12 +59,15 @@ import com.alodiga.wallet.respuestas.ResponseCode;
 import com.alodiga.wallet.respuestas.StateListResponse;
 import com.alodiga.wallet.respuestas.TransactionApproveRequestResponse;
 
-import com.alodiga.wallet.utils.Constants;
+//import com.alodiga.wallet.utils.Constants;
+import com.alodiga.wallet.common.utils.Constants;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -304,7 +309,11 @@ public class APIAdminWalletOperations {
         String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
 
         try {
-            //Guardo person
+            //Se obtiene la Clasificación del Solicitante Natural
+            String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
+            PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter(Constants.PARAM_CODE,personClassificationCode).getSingleResult();
+     
+            //Se guarda el objeto person en la BD
             person.setCreateDate(new Timestamp(new Date().getTime()));
             if (person.getEmail() != null) {
                 person.setEmail(person.getEmail());
@@ -312,8 +321,10 @@ public class APIAdminWalletOperations {
                 person.setEmail(null);
             }
             person.setPersonTypeId(person.getPersonTypeId());
+
             //person.setPersonClassificationId(person.getPersonClassificationId());
             PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter("code", personClassificationCode).getSingleResult();
+
             person.setPersonClassificationId(personClassification);
             if (person.getWebSite() != null) {
                 person.setWebSite(person.getWebSite());
@@ -322,7 +333,8 @@ public class APIAdminWalletOperations {
             }
             person.setCountryId(person.getCountryId());
             entityManager.persist(person);
-            //Guardo Natural Person
+
+            //Se guarda el objeto NaturalPerson en la BD
             naturalPerson.setPersonId(person);
             naturalPerson.setDocumentsPersonTypeId(naturalPerson.getDocumentsPersonTypeId());
             naturalPerson.setIdentificationNumber(naturalPerson.getIdentificationNumber());
@@ -350,7 +362,8 @@ public class APIAdminWalletOperations {
             }
             naturalPerson.setCreateDate(new Timestamp(new Date().getTime()));
             entityManager.persist(naturalPerson);
-            //Guardo Phone Number
+            
+            //Se guarda el objeto PhonePerson en la BD
             phonePerson.setCountryId(phonePerson.getCountryId());
             phonePerson.setCountryCode(phonePerson.getCountryCode());
             phonePerson.setAreaCode(phonePerson.getAreaCode());
@@ -365,6 +378,7 @@ public class APIAdminWalletOperations {
             phonePerson.setIndMainPhone(phonePerson.getIndMainPhone());
             phonePerson.setCreateDate(new Timestamp(new Date().getTime()));
             entityManager.persist(phonePerson);
+            
             return new NaturalPersonResponse(ResponseCode.EXITO, "", naturalPerson);
         } catch (Exception e) {
             e.printStackTrace();
