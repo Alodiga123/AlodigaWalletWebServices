@@ -306,8 +306,6 @@ public class APIAdminWalletOperations {
 
     public NaturalPersonResponse saveBusinessApplicantNaturalPerson(Person person, NaturalPerson naturalPerson, PhonePerson phonePerson) {
 
-        String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
-
         try {
             //Se obtiene la Clasificación del Solicitante Natural
             String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
@@ -321,10 +319,6 @@ public class APIAdminWalletOperations {
                 person.setEmail(null);
             }
             person.setPersonTypeId(person.getPersonTypeId());
-
-            //person.setPersonClassificationId(person.getPersonClassificationId());
-            PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter("code", personClassificationCode).getSingleResult();
-
             person.setPersonClassificationId(personClassification);
             if (person.getWebSite() != null) {
                 person.setWebSite(person.getWebSite());
