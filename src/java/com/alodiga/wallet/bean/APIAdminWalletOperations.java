@@ -217,7 +217,7 @@ public class APIAdminWalletOperations {
     public TransactionApproveRequestResponse saveTransactionApproveRequest(Long unifiedRegistryUserId, Long productId, Long transactionId, Long bankOperationId, Long documentTypeId, Long originApplicationId) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         Date curDate = new Date();
-        String statusTransactionApproveCode = StatusTransactionApproveRequestE.APPR.getStatusTransactionApproveRequestCode();
+        String statusTransactionApproveCode = StatusTransactionApproveRequestE.APROBA.getStatusTransactionApproveRequestCode();
         try {
             TransactionApproveRequest approveRequest = new TransactionApproveRequest();
             approveRequest.setUnifiedRegistryUserId(unifiedRegistryUserId);
@@ -250,7 +250,7 @@ public class APIAdminWalletOperations {
 
     public AccountBankResponse saveAccountBank(Long unifiedRegistryId, String accountNumber, Long bankId, Integer accountTypeBankId) {
 
-        String statusAccountBankCode = StatusAccountBankE.ACTI.getStatusAccountCode();
+        String statusAccountBankCode = StatusAccountBankE.ACTIVA.getStatusAccountCode();
         try {
             AccountBank accountBank = new AccountBank();
             accountBank.setUnifiedRegistryId(unifiedRegistryId);
@@ -304,8 +304,6 @@ public class APIAdminWalletOperations {
 
     public NaturalPersonResponse saveBusinessApplicantNaturalPerson(Person person, NaturalPerson naturalPerson, PhonePerson phonePerson) {
 
-        String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
-
         try {
             //Se obtiene la Clasificación del Solicitante Natural
             String personClassificationCode = PersonClassificationE.NABUAP.getPersonClassificationCode();
@@ -319,10 +317,6 @@ public class APIAdminWalletOperations {
                 person.setEmail(null);
             }
             person.setPersonTypeId(person.getPersonTypeId());
-
-            //person.setPersonClassificationId(person.getPersonClassificationId());
-            PersonClassification personClassification = (PersonClassification) entityManager.createNamedQuery(QueryConstants.PERSON_CLASSIFICATION_BY_CODE, PersonClassification.class).setParameter("code", personClassificationCode).getSingleResult();
-
             person.setPersonClassificationId(personClassification);
             if (person.getWebSite() != null) {
                 person.setWebSite(person.getWebSite());
